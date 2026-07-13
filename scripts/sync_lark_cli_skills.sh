@@ -7,7 +7,7 @@ repository_root=$(cd -- "$script_directory/.." && pwd)
 
 upstream_repository=${UPSTREAM_REPOSITORY:-https://github.com/larksuite/cli.git}
 upstream_ref=${UPSTREAM_REF:-main}
-skills_destination=${SKILLS_DESTINATION:-$repository_root/plugins/lark-cli-skills/skills}
+skills_destination=${SKILLS_DESTINATION:-$repository_root/plugins/lark-cli-skills/internal-skills}
 revision_file=${UPSTREAM_REVISION_FILE:-$repository_root/plugins/lark-cli-skills/.upstream-revision}
 license_destination=${UPSTREAM_LICENSE_DESTINATION:-$repository_root/plugins/lark-cli-skills/LICENSE}
 

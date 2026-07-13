@@ -8,8 +8,8 @@ from pathlib import Path
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_ROOT = REPOSITORY_ROOT / "plugins" / "lark-cli-skills"
 PLUGIN_MANIFEST = PLUGIN_ROOT / ".codex-plugin" / "plugin.json"
-REGISTERED_SKILLS_ROOT = PLUGIN_ROOT / "router-skills"
-INTERNAL_SKILLS_ROOT = PLUGIN_ROOT / "skills"
+REGISTERED_SKILLS_ROOT = PLUGIN_ROOT / "skills"
+INTERNAL_SKILLS_ROOT = PLUGIN_ROOT / "internal-skills"
 ROUTER_ROOT = REGISTERED_SKILLS_ROOT / "lark"
 DISCOVERY_SCRIPT = ROUTER_ROOT / "scripts" / "discover_internal_skills.py"
 
@@ -21,8 +21,9 @@ class LarkLazyLoadingTest(unittest.TestCase):
             path.parent.name for path in REGISTERED_SKILLS_ROOT.glob("*/SKILL.md")
         )
 
-        self.assertEqual(manifest["skills"], "./router-skills/")
+        self.assertEqual(manifest["skills"], "./skills/")
         self.assertEqual(registered_skills, ["lark"])
+        self.assertFalse((PLUGIN_ROOT / "router-skills").exists())
         self.assertTrue(INTERNAL_SKILLS_ROOT.is_dir())
         self.assertGreaterEqual(
             len(list(INTERNAL_SKILLS_ROOT.glob("*/SKILL.md"))),
