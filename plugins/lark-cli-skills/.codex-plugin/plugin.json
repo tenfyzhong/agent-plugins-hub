@@ -7,7 +7,7 @@
     "url": "https://github.com/tenfyzhong"
   },
   "homepage": "https://github.com/larksuite/cli/tree/main/skills",
-  "repository": "https://github.com/tenfyzhong/openai-plugins-hub",
+  "repository": "https://github.com/tenfyzhong/agent-plugins-hub",
   "license": "MIT",
   "keywords": ["lark", "feishu", "lark-cli", "productivity"],
   "skills": "./skills/",
