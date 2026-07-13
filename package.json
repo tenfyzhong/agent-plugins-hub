@@ -1,0 +1,17 @@
+{
+  "name": "openai-plugins-hub",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Codex plugins and Agent Skills distributed from this repository.",
+  "keywords": [
+    "pi-package",
+    "lark",
+    "feishu"
+  ],
+  "license": "MIT",
+  "pi": {
+    "skills": [
+      "./plugins/lark-cli-skills/skills"
+    ]
+  }
+}
