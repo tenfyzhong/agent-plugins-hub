@@ -1,22 +1,25 @@
-# OpenAI Plugins Hub
+# Agent Plugins Hub
 
-An OpenAI Codex marketplace for plugins maintained in this repository. Its
-layout follows the official
-[marketplace and plugin structure](https://learn.chatgpt.com/docs/build-plugins#marketplace-metadata).
+A cross-agent marketplace for plugins maintained in this repository. It
+supports OpenAI Codex, Claude Code, and Pi while keeping each agent's native
+package metadata alongside shared Agent Skills.
 
 ## Repository layout
 
 ```text
 .
-├── .agents/plugins/marketplace.json    # Marketplace catalog
+├── .agents/plugins/marketplace.json    # Codex marketplace catalog
+├── .claude-plugin/marketplace.json     # Claude Code marketplace catalog
 ├── .github/workflows/                  # Marketplace automation
 ├── plugins/
 │   └── lark-cli-skills/
-│       ├── .codex-plugin/plugin.json   # Required plugin manifest
+│       ├── .claude-plugin/plugin.json  # Claude Code plugin manifest
+│       ├── .codex-plugin/plugin.json   # Codex plugin manifest
 │       ├── skills/lark/                # Registered lazy router skill
 │       ├── internal-skills/            # Unregistered upstream skills
 │       ├── LICENSE
 │       └── .upstream-revision
+├── package.json                        # Pi package manifest
 ├── scripts/                            # Marketplace maintenance scripts
 └── tests/                              # Marketplace and sync validation
 ```
@@ -25,12 +28,12 @@ Marketplace entries use `./plugins/<plugin-name>` paths. Codex resolves these
 paths from the marketplace repository root, not from the nested
 `.agents/plugins/` directory.
 
-## Install the marketplace
+## Install with Codex
 
 Add the GitHub repository as a marketplace:
 
 ```bash
-codex plugin marketplace add tenfyzhong/openai-plugins-hub --ref main
+codex plugin marketplace add tenfyzhong/agent-plugins-hub --ref main
 ```
 
 For local development, run this from the repository root instead:
@@ -42,8 +45,48 @@ codex plugin marketplace add .
 Then install plugins through the Codex plugin browser or by name:
 
 ```bash
-codex plugin add lark-cli-skills@openai-plugins-hub
+codex plugin add lark-cli-skills@tenfyzhong-agent-plugins-hub
 ```
+
+## Install with Claude Code
+
+Add the GitHub repository as a Claude Code marketplace:
+
+```bash
+claude plugin marketplace add tenfyzhong/agent-plugins-hub
+```
+
+For local development, run this from the repository root instead:
+
+```bash
+claude plugin marketplace add .
+```
+
+Then install the plugin:
+
+```bash
+claude plugin install lark-cli-skills@tenfyzhong-agent-plugins-hub
+```
+
+Claude Code namespaces plugin skills. Invoke the router explicitly with
+`/lark-cli-skills:lark`, or let Claude select it from the request context.
+
+## Install with Pi
+
+Install the package directly from GitHub:
+
+```bash
+pi install git:github.com/tenfyzhong/agent-plugins-hub
+```
+
+For local development, run this from the repository root instead:
+
+```bash
+pi install .
+```
+
+Invoke the router explicitly with `/skill:lark`, or let Pi select it from the
+request context.
 
 ## Lark CLI Skills
 

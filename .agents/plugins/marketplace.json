@@ -1,7 +1,7 @@
 {
-  "name": "openai-plugins-hub",
+  "name": "tenfyzhong-agent-plugins-hub",
   "interface": {
-    "displayName": "OpenAI Plugins Hub"
+    "displayName": "Agent Plugins Hub"
   },
   "plugins": [
     {

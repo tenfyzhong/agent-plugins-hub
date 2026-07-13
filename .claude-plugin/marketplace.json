@@ -1,0 +1,15 @@
+{
+  "name": "tenfyzhong-agent-plugins-hub",
+  "owner": {
+    "name": "tenfyzhong"
+  },
+  "metadata": {
+    "description": "Cross-agent productivity plugins and shared Agent Skills."
+  },
+  "plugins": [
+    {
+      "name": "lark-cli-skills",
+      "source": "./plugins/lark-cli-skills"
+    }
+  ]
+}

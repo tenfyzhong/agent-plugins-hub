@@ -5,6 +5,11 @@ from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 MARKETPLACE_FILE = REPOSITORY_ROOT / ".agents" / "plugins" / "marketplace.json"
+CLAUDE_MARKETPLACE_FILE = REPOSITORY_ROOT / ".claude-plugin" / "marketplace.json"
+MARKETPLACE_NAME = "tenfyzhong-agent-plugins-hub"
+REPOSITORY_NAME = "agent-plugins-hub"
+REPOSITORY_URL = "https://github.com/tenfyzhong/agent-plugins-hub"
+GITHUB_USER = "tenfyzhong"
 
 
 class MarketplaceLayoutTest(unittest.TestCase):
@@ -13,7 +18,7 @@ class MarketplaceLayoutTest(unittest.TestCase):
         plugin_names = [plugin["name"] for plugin in marketplace["plugins"]]
 
         self.assertEqual(len(plugin_names), len(set(plugin_names)))
-        self.assertTrue(marketplace["name"])
+        self.assertEqual(marketplace["name"], MARKETPLACE_NAME)
         self.assertTrue(marketplace["interface"]["displayName"])
 
         for plugin in marketplace["plugins"]:
@@ -43,6 +48,98 @@ class MarketplaceLayoutTest(unittest.TestCase):
                     self.assertTrue(
                         (plugin_root / skills_path.removeprefix("./")).is_dir()
                     )
+
+    def test_repository_identity_is_consistent(self):
+        marketplace = json.loads(MARKETPLACE_FILE.read_text(encoding="utf-8"))
+        package = json.loads(
+            (REPOSITORY_ROOT / "package.json").read_text(encoding="utf-8")
+        )
+        readme = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
+
+        self.assertEqual(marketplace["interface"]["displayName"], "Agent Plugins Hub")
+        self.assertEqual(package["name"], REPOSITORY_NAME)
+        self.assertIn("# Agent Plugins Hub", readme)
+        self.assertIn(f"tenfyzhong/{REPOSITORY_NAME}", readme)
+
+        for manifest_file in (
+            REPOSITORY_ROOT
+            / "plugins"
+            / "lark-cli-skills"
+            / ".codex-plugin"
+            / "plugin.json",
+            REPOSITORY_ROOT
+            / "plugins"
+            / "lark-cli-skills"
+            / ".claude-plugin"
+            / "plugin.json",
+        ):
+            with self.subTest(manifest=manifest_file):
+                manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
+
+                self.assertEqual(manifest["author"]["name"], GITHUB_USER)
+                self.assertEqual(manifest["repository"], REPOSITORY_URL)
+
+
+class ClaudeMarketplaceLayoutTest(unittest.TestCase):
+    def test_marketplace_entries_follow_repo_layout(self):
+        marketplace = json.loads(
+            CLAUDE_MARKETPLACE_FILE.read_text(encoding="utf-8")
+        )
+        plugin_names = [plugin["name"] for plugin in marketplace["plugins"]]
+
+        self.assertEqual(marketplace["name"], MARKETPLACE_NAME)
+        self.assertTrue(marketplace["metadata"]["description"])
+        self.assertEqual(marketplace["owner"]["name"], GITHUB_USER)
+        self.assertEqual(len(plugin_names), len(set(plugin_names)))
+
+        for plugin in marketplace["plugins"]:
+            with self.subTest(plugin=plugin["name"]):
+                expected_source = f"./plugins/{plugin['name']}"
+
+                self.assertEqual(plugin["source"], expected_source)
+
+                plugin_root = REPOSITORY_ROOT / expected_source.removeprefix("./")
+                claude_manifest_file = (
+                    plugin_root / ".claude-plugin" / "plugin.json"
+                )
+                claude_manifest = json.loads(
+                    claude_manifest_file.read_text(encoding="utf-8")
+                )
+                codex_manifest = json.loads(
+                    (
+                        plugin_root / ".codex-plugin" / "plugin.json"
+                    ).read_text(encoding="utf-8")
+                )
+
+                self.assertEqual(plugin_root.name, plugin["name"])
+                self.assertEqual(claude_manifest["name"], plugin["name"])
+                self.assertEqual(
+                    codex_manifest["interface"]["developerName"], GITHUB_USER
+                )
+                self.assertEqual(
+                    claude_manifest["version"], codex_manifest["version"]
+                )
+                self.assertEqual(
+                    claude_manifest["skills"], codex_manifest["skills"]
+                )
+
+                skills_path = claude_manifest["skills"]
+                self.assertTrue(skills_path.startswith("./"))
+                self.assertTrue(
+                    (plugin_root / skills_path.removeprefix("./")).is_dir()
+                )
+
+    def test_lark_router_is_agent_neutral(self):
+        router = (
+            REPOSITORY_ROOT
+            / "plugins"
+            / "lark-cli-skills"
+            / "skills"
+            / "lark"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertNotIn("Codex", router)
 
 
 if __name__ == "__main__":

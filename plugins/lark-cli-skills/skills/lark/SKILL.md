@@ -6,7 +6,7 @@ description: "Route Lark and Feishu (飞书) operations to bundled lark-cli work
 # Lark and Feishu Router
 
 Expose one lightweight entry point while keeping the bundled service skills out
-of Codex's initial skill metadata list.
+of the agent's initial skill metadata list.
 
 ## Route the request
 
