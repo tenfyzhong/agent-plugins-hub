@@ -1,0 +1,27 @@
+{
+  "name": "lark-cli-skills",
+  "version": "0.1.0",
+  "description": "Official Lark CLI skills for operating Lark and Feishu from Codex.",
+  "author": {
+    "name": "Tenghui Zhong",
+    "url": "https://github.com/tenfyzhong"
+  },
+  "homepage": "https://github.com/larksuite/cli/tree/main/skills",
+  "repository": "https://github.com/tenfyzhong/openai-plugins-hub",
+  "license": "MIT",
+  "keywords": ["lark", "feishu", "lark-cli", "productivity"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Lark CLI Skills",
+    "shortDescription": "Operate Lark and Feishu with the official CLI skills.",
+    "longDescription": "A synchronized collection of the official larksuite/cli skills for messages, docs, calendar, tasks, mail, meetings, Base, Sheets, and other Lark services.",
+    "developerName": "Tenghui Zhong",
+    "category": "Productivity",
+    "capabilities": ["Lark", "Feishu", "Productivity"],
+    "defaultPrompt": [
+      "Show my Lark agenda and unfinished tasks for today.",
+      "Summarize my recent Lark messages and meetings.",
+      "Help me create or update content in Lark."
+    ]
+  }
+}
