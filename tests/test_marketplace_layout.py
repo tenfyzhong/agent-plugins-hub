@@ -9,6 +9,7 @@ CLAUDE_MARKETPLACE_FILE = REPOSITORY_ROOT / ".claude-plugin" / "marketplace.json
 MARKETPLACE_NAME = "tenfyzhong-agent-plugins-hub"
 REPOSITORY_NAME = "agent-plugins-hub"
 REPOSITORY_URL = "https://github.com/tenfyzhong/agent-plugins-hub"
+GITHUB_USER = "tenfyzhong"
 
 
 class MarketplaceLayoutTest(unittest.TestCase):
@@ -75,6 +76,7 @@ class MarketplaceLayoutTest(unittest.TestCase):
             with self.subTest(manifest=manifest_file):
                 manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
 
+                self.assertEqual(manifest["author"]["name"], GITHUB_USER)
                 self.assertEqual(manifest["repository"], REPOSITORY_URL)
 
 
@@ -87,7 +89,7 @@ class ClaudeMarketplaceLayoutTest(unittest.TestCase):
 
         self.assertEqual(marketplace["name"], MARKETPLACE_NAME)
         self.assertTrue(marketplace["metadata"]["description"])
-        self.assertTrue(marketplace["owner"]["name"])
+        self.assertEqual(marketplace["owner"]["name"], GITHUB_USER)
         self.assertEqual(len(plugin_names), len(set(plugin_names)))
 
         for plugin in marketplace["plugins"]:
@@ -111,6 +113,9 @@ class ClaudeMarketplaceLayoutTest(unittest.TestCase):
 
                 self.assertEqual(plugin_root.name, plugin["name"])
                 self.assertEqual(claude_manifest["name"], plugin["name"])
+                self.assertEqual(
+                    codex_manifest["interface"]["developerName"], GITHUB_USER
+                )
                 self.assertEqual(
                     claude_manifest["version"], codex_manifest["version"]
                 )

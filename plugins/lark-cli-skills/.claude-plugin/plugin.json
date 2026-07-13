@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "Lazy-loaded official Lark CLI workflows for operating Lark and Feishu from Claude Code.",
   "author": {
-    "name": "Tenghui Zhong",
+    "name": "tenfyzhong",
     "url": "https://github.com/tenfyzhong"
   },
   "homepage": "https://github.com/larksuite/cli/tree/main/skills",

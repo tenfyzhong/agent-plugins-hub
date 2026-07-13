@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "Lazy-loaded official Lark CLI workflows for operating Lark and Feishu from Codex.",
   "author": {
-    "name": "Tenghui Zhong",
+    "name": "tenfyzhong",
     "url": "https://github.com/tenfyzhong"
   },
   "homepage": "https://github.com/larksuite/cli/tree/main/skills",
@@ -15,7 +15,7 @@
     "displayName": "Lark CLI Skills",
     "shortDescription": "Operate Lark and Feishu with the official CLI skills.",
     "longDescription": "A synchronized collection of the official larksuite/cli skills for messages, docs, calendar, tasks, mail, meetings, Base, Sheets, and other Lark services.",
-    "developerName": "Tenghui Zhong",
+    "developerName": "tenfyzhong",
     "category": "Productivity",
     "capabilities": ["Lark", "Feishu", "Productivity"],
     "defaultPrompt": [

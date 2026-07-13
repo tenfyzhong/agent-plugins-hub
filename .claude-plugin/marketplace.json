@@ -1,7 +1,7 @@
 {
   "name": "tenfyzhong-agent-plugins-hub",
   "owner": {
-    "name": "Tenghui Zhong"
+    "name": "tenfyzhong"
   },
   "metadata": {
     "description": "Cross-agent productivity plugins and shared Agent Skills."
