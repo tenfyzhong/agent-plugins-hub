@@ -38,8 +38,11 @@ class MarketplaceLayoutTest(unittest.TestCase):
                 self.assertEqual(plugin_root.name, plugin["name"])
                 self.assertEqual(manifest["name"], plugin["name"])
                 if "skills" in manifest:
-                    self.assertEqual(manifest["skills"], "./skills/")
-                    self.assertTrue((plugin_root / "skills").is_dir())
+                    skills_path = manifest["skills"]
+                    self.assertTrue(skills_path.startswith("./"))
+                    self.assertTrue(
+                        (plugin_root / skills_path.removeprefix("./")).is_dir()
+                    )
 
 
 if __name__ == "__main__":
