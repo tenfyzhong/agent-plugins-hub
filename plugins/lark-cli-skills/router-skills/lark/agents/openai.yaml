@@ -1,0 +1,6 @@
+interface:
+  display_name: "Lark and Feishu Router"
+  short_description: "Route Lark and Feishu tasks on demand"
+  default_prompt: "Use $lark to show today’s Lark agenda and unfinished tasks."
+policy:
+  allow_implicit_invocation: true

@@ -1,7 +1,7 @@
 {
   "name": "lark-cli-skills",
-  "version": "0.1.0",
-  "description": "Official Lark CLI skills for operating Lark and Feishu from Codex.",
+  "version": "0.2.0",
+  "description": "Lazy-loaded official Lark CLI workflows for operating Lark and Feishu from Codex.",
   "author": {
     "name": "Tenghui Zhong",
     "url": "https://github.com/tenfyzhong"
@@ -10,7 +10,7 @@
   "repository": "https://github.com/tenfyzhong/openai-plugins-hub",
   "license": "MIT",
   "keywords": ["lark", "feishu", "lark-cli", "productivity"],
-  "skills": "./skills/",
+  "skills": "./router-skills/",
   "interface": {
     "displayName": "Lark CLI Skills",
     "shortDescription": "Operate Lark and Feishu with the official CLI skills.",
