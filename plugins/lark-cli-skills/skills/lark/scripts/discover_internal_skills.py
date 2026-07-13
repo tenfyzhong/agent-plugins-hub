@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 
-DEFAULT_SKILLS_DIRECTORY = Path(__file__).resolve().parents[3] / "skills"
+DEFAULT_SKILLS_DIRECTORY = Path(__file__).resolve().parents[3] / "internal-skills"
 
 
 def decode_inline_scalar(value):

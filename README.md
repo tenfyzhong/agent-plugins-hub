@@ -13,8 +13,8 @@ layout follows the official
 ├── plugins/
 │   └── lark-cli-skills/
 │       ├── .codex-plugin/plugin.json   # Required plugin manifest
-│       ├── router-skills/lark/         # Registered lazy router skill
-│       ├── skills/                     # Unregistered upstream skills
+│       ├── skills/lark/                # Registered lazy router skill
+│       ├── internal-skills/            # Unregistered upstream skills
 │       ├── LICENSE
 │       └── .upstream-revision
 ├── scripts/                            # Marketplace maintenance scripts
@@ -49,10 +49,10 @@ codex plugin add lark-cli-skills@openai-plugins-hub
 
 The `lark-cli-skills` plugin mirrors every skill under
 [`larksuite/cli/skills`](https://github.com/larksuite/cli/tree/main/skills).
-The manifest registers only the lightweight `lark` router under
-`router-skills/`; the upstream `skills/` tree remains unregistered. After a
-Lark or Feishu prompt selects the router, it reads the internal skill metadata,
-selects the relevant workflow, and loads only that workflow's full
+The manifest registers only the lightweight `lark` router under `skills/`;
+the upstream skills are stored under `internal-skills/` and remain unregistered.
+After a Lark or Feishu prompt selects the router, it reads the internal skill
+metadata, selects the relevant workflow, and loads only that workflow's full
 instructions. Each snapshot records its source commit in
 `plugins/lark-cli-skills/.upstream-revision`.
 

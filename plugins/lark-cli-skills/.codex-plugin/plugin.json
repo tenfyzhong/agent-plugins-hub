@@ -10,7 +10,7 @@
   "repository": "https://github.com/tenfyzhong/openai-plugins-hub",
   "license": "MIT",
   "keywords": ["lark", "feishu", "lark-cli", "productivity"],
-  "skills": "./router-skills/",
+  "skills": "./skills/",
   "interface": {
     "displayName": "Lark CLI Skills",
     "shortDescription": "Operate Lark and Feishu with the official CLI skills.",
