@@ -1,6 +1,6 @@
 {
   "name": "agent-guard",
-  "version": "0.1.0+codex.20260723092831",
+  "version": "0.1.0+codex.20260723093856",
   "private": true,
   "type": "module",
   "description": "Cross-agent destructive-command guard and Telegram completion notifier.",

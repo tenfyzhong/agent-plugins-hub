@@ -291,12 +291,17 @@ export function launchTelegramNotification(
   {
     spawnImpl = spawn,
     workerPath = fileURLToPath(new URL("../hooks/notification-worker.mjs", import.meta.url)),
+    runtimeExecPath = process.execPath,
+    runtimeVersions = process.versions,
+    runtimeEnv = process.env,
   } = {},
 ) {
-  const worker = spawnImpl(process.execPath, [workerPath], {
+  const workerExecutable =
+    runtimeEnv.AGENT_GUARD_NODE || (runtimeVersions.bun ? "node" : runtimeExecPath);
+  const worker = spawnImpl(workerExecutable, [workerPath], {
     detached: true,
     stdio: ["pipe", "ignore", "ignore"],
-    env: { ...process.env, NODE_USE_ENV_PROXY: "1" },
+    env: { ...runtimeEnv, NODE_USE_ENV_PROXY: "1" },
   });
   worker.stdin.on("error", () => {});
   worker.stdin.end(JSON.stringify(notification));

@@ -111,7 +111,7 @@ test("oh-my-pi extension registers completion notification on session_stop", asy
     },
   };
   const previousHost = process.env.AGENT_GUARD_HOST;
-  process.env.AGENT_GUARD_HOST = "oh-my-pi";
+  delete process.env.AGENT_GUARD_HOST;
   try {
     const extension = (await import(`${pathToFileURL(ompHookPath).href}?omp-stop-test`)).default;
     extension(pi);
