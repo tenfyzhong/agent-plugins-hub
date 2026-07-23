@@ -161,6 +161,33 @@ test("launches Telegram notifications in a detached background worker", () => {
   assert.equal(unreferenced, true);
 });
 
+test("launches the notification worker with Node from a Bun host", () => {
+  let spawnedCommand;
+  const spawnImpl = (command) => {
+    spawnedCommand = command;
+    return {
+      stdin: {
+        end() {},
+        on() {},
+        unref() {},
+      },
+      unref() {},
+    };
+  };
+
+  launchTelegramNotification(
+    { host: "oh-my-pi", event: "session_stop" },
+    {
+      spawnImpl,
+      workerPath: "/tmp/notification-worker.mjs",
+      runtimeExecPath: "/opt/homebrew/bin/omp",
+      runtimeVersions: { bun: "1.3.0" },
+    },
+  );
+
+  assert.equal(spawnedCommand, "node");
+});
+
 test("resolves credentials from environment variables first", () => {
   const credentials = resolveTelegramCredentials(
     { TELEGRAM_BOT_TOKEN: "env-token", TELEGRAM_CHAT_ID: "env-chat" },

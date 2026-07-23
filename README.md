@@ -91,12 +91,21 @@ pi install .
 Invoke the router explicitly with `/skill:lark`, or let Pi select it from the
 request context.
 
+## Install with Oh My Pi
+
+Add this repository as an OMP marketplace and install Agent Guard as a plugin:
+
+```bash
+omp plugin marketplace add tenfyzhong/agent-plugins-hub
+omp plugin install agent-guard@tenfyzhong-agent-plugins-hub
+```
+
 ## Agent Guard
 
 The `agent-guard` plugin blocks known destructive shell commands before they
 run and can send a Telegram notification when an agent run finishes. It uses
-native hooks for Codex and Claude Code and a shared extension for Pi and
-oh-my-pi. See [`plugins/agent-guard/README.md`](plugins/agent-guard/README.md)
+native hooks for Codex, Claude Code, and Oh My Pi, plus a Pi extension. See
+[`plugins/agent-guard/README.md`](plugins/agent-guard/README.md)
 for its blocked-command policy and credential setup.
 
 ## Lark CLI Skills

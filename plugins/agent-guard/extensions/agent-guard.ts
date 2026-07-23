@@ -17,11 +17,6 @@ function hostName(): string {
   return process.argv.some((arg) => /(^|\/)omp$/.test(arg)) ? "oh-my-pi" : "pi";
 }
 
-function isOhMyPi(): boolean {
-  return process.env.AGENT_GUARD_HOST === "oh-my-pi" ||
-    process.argv.some((arg) => /(^|\/)omp$/.test(arg));
-}
-
 function assistantText(messages: AgentMessageLike[]): string | undefined {
   const assistant = messages.findLast((message) => message.role === "assistant");
   if (!assistant) return undefined;
@@ -34,9 +29,8 @@ function assistantText(messages: AgentMessageLike[]): string | undefined {
   return text ? text.slice(0, 3000) : undefined;
 }
 
-export default function agentGuard(pi: ExtensionAPI) {
+export function registerAgentGuard(pi: ExtensionAPI, host = hostName()) {
   let lastMessage: string | undefined;
-  const host = hostName();
 
   const notifyCompletion = (event: string, ctx: any, sessionId?: string) => {
     try {
@@ -62,7 +56,7 @@ export default function agentGuard(pi: ExtensionAPI) {
     return { block: true, reason: `Dangerous command blocked: ${reason}.` };
   });
 
-  if (isOhMyPi()) {
+  if (host === "oh-my-pi") {
     pi.on("session_stop", async (event, ctx) => {
       if (event.stop_hook_active === true) return;
       lastMessage = event.last_assistant_message
@@ -81,3 +75,5 @@ export default function agentGuard(pi: ExtensionAPI) {
     notifyCompletion("agent_settled", ctx);
   });
 }
+
+export default registerAgentGuard;

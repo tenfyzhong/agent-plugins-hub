@@ -9,6 +9,11 @@
     "feishu"
   ],
   "license": "MIT",
+  "omp": {
+    "extensions": [
+      "./plugins/agent-guard/extensions/agent-guard-omp.ts"
+    ]
+  },
   "pi": {
     "extensions": [
       "./plugins/agent-guard/extensions/agent-guard.ts"
