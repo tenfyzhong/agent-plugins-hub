@@ -2,6 +2,7 @@
 
 import {
   buildTelegramMessage,
+  detectAgentHost,
   dangerousCommandReason,
   resolveTelegramCredentials,
   sendTelegramNotification,
@@ -22,11 +23,6 @@ function shouldSkipStop(payload) {
   if (payload.stop_hook_active === true) return true;
   if (payload.cwd === `${process.env.HOME}/.codex/memories`) return true;
   return typeof payload.cwd === "string" && payload.cwd.includes("/.slock/");
-}
-
-function hostName() {
-  if (process.env.AGENT_GUARD_HOST) return process.env.AGENT_GUARD_HOST;
-  return process.env.CLAUDE_PLUGIN_ROOT ? "Claude Code" : "Codex";
 }
 
 function handlePreToolUse(payload) {
@@ -51,7 +47,7 @@ async function handleStop(payload) {
   if (!credentials) return;
 
   const text = buildTelegramMessage({
-    host: hostName(),
+    host: detectAgentHost(),
     event: payload.hook_event_name || "Stop",
     model: payload.model,
     sessionId: payload.session_id,

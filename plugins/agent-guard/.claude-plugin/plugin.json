@@ -1,6 +1,6 @@
 {
   "name": "agent-guard",
-  "version": "0.1.0+codex.20260723082644",
+  "version": "0.1.0+codex.20260723163826",
   "description": "Block destructive agent commands and send Telegram notifications when runs finish.",
   "author": {
     "name": "tenfyzhong",

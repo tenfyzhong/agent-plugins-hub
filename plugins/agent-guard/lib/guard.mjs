@@ -239,6 +239,12 @@ export function htmlEscape(value) {
     .replaceAll(">", "&gt;");
 }
 
+export function detectAgentHost(env = process.env) {
+  if (env.AGENT_GUARD_HOST) return env.AGENT_GUARD_HOST;
+  if (env.CODEX_THREAD_ID) return "Codex";
+  return env.CLAUDE_PLUGIN_ROOT ? "Claude Code" : "Codex";
+}
+
 export function buildTelegramMessage({
   host,
   event,

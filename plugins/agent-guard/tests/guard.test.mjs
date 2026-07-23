@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   buildTelegramMessage,
+  detectAgentHost,
   dangerousCommandReason,
   resolveTelegramCredentials,
   sendTelegramNotification,
@@ -60,6 +61,27 @@ test("builds an escaped, host-specific Telegram message", () => {
   assert.match(message, /claude&amp;sonnet/);
   assert.match(message, /\/tmp\/a&lt;b/);
   assert.match(message, /done &amp; &lt;safe&gt;/);
+});
+
+test("detects Codex when Claude compatibility variables are also present", () => {
+  assert.equal(
+    detectAgentHost({
+      CODEX_THREAD_ID: "thread-1",
+      CLAUDE_PLUGIN_ROOT: "/tmp/plugin",
+    }),
+    "Codex",
+  );
+});
+
+test("detects Claude Code from its plugin root", () => {
+  assert.equal(detectAgentHost({ CLAUDE_PLUGIN_ROOT: "/tmp/plugin" }), "Claude Code");
+});
+
+test("allows the detected host to be overridden", () => {
+  assert.equal(
+    detectAgentHost({ AGENT_GUARD_HOST: "Custom Agent", CODEX_THREAD_ID: "thread-1" }),
+    "Custom Agent",
+  );
 });
 
 test("posts JSON to Telegram without exposing credentials in the body", async () => {
