@@ -34,8 +34,8 @@ honors inherited `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`, and lowercase equivale
 
 - Codex and Claude Code discover `hooks/hooks.json` from the installed plugin.
 - pi loads `extensions/agent-guard.ts` through the root package or this plugin's `package.json`.
-- oh-my-pi marketplace installs discover `hooks/post/agent-guard.ts` as a native plugin hook.
-- oh-my-pi npm and linked installs load that same hook through `omp.extensions`.
+- oh-my-pi marketplace, npm, and linked installs load
+  `extensions/agent-guard-omp.ts` through `omp.extensions`.
 
 pi sends completion notifications from `agent_settled`. oh-my-pi uses its main-session
 `session_stop` event, which fires only after automatic continuations have finished.

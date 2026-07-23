@@ -11,7 +11,7 @@
   "license": "MIT",
   "omp": {
     "extensions": [
-      "./plugins/agent-guard/hooks/post/agent-guard.ts"
+      "./plugins/agent-guard/extensions/agent-guard-omp.ts"
     ]
   },
   "pi": {

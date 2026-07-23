@@ -95,12 +95,22 @@ class MarketplaceLayoutTest(unittest.TestCase):
             ).read_text(encoding="utf-8")
         )
 
-        repository_entry = "./plugins/agent-guard/hooks/post/agent-guard.ts"
-        plugin_entry = "./hooks/post/agent-guard.ts"
+        repository_entry = "./plugins/agent-guard/extensions/agent-guard-omp.ts"
+        plugin_entry = "./extensions/agent-guard-omp.ts"
         self.assertEqual(repository_package["omp"]["extensions"], [repository_entry])
         self.assertEqual(plugin_package["omp"]["extensions"], [plugin_entry])
         self.assertTrue(
             (REPOSITORY_ROOT / repository_entry.removeprefix("./")).is_file()
+        )
+        self.assertFalse(
+            (
+                REPOSITORY_ROOT
+                / "plugins"
+                / "agent-guard"
+                / "hooks"
+                / "post"
+                / "agent-guard.ts"
+            ).exists()
         )
 
 
