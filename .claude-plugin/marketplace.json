@@ -10,6 +10,10 @@
     {
       "name": "lark-cli-skills",
       "source": "./plugins/lark-cli-skills"
+    },
+    {
+      "name": "agent-guard",
+      "source": "./plugins/agent-guard"
     }
   ]
 }

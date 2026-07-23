@@ -61,23 +61,29 @@ class MarketplaceLayoutTest(unittest.TestCase):
         self.assertIn("# Agent Plugins Hub", readme)
         self.assertIn(f"tenfyzhong/{REPOSITORY_NAME}", readme)
 
-        for manifest_file in (
-            REPOSITORY_ROOT
-            / "plugins"
-            / "lark-cli-skills"
-            / ".codex-plugin"
-            / "plugin.json",
-            REPOSITORY_ROOT
-            / "plugins"
-            / "lark-cli-skills"
-            / ".claude-plugin"
-            / "plugin.json",
-        ):
-            with self.subTest(manifest=manifest_file):
-                manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
+        for plugin in marketplace["plugins"]:
+            for agent_directory in (".codex-plugin", ".claude-plugin"):
+                manifest_file = (
+                    REPOSITORY_ROOT
+                    / "plugins"
+                    / plugin["name"]
+                    / agent_directory
+                    / "plugin.json"
+                )
+                with self.subTest(manifest=manifest_file):
+                    manifest = json.loads(
+                        manifest_file.read_text(encoding="utf-8")
+                    )
 
-                self.assertEqual(manifest["author"]["name"], GITHUB_USER)
-                self.assertEqual(manifest["repository"], REPOSITORY_URL)
+                    self.assertEqual(manifest["author"]["name"], GITHUB_USER)
+                    self.assertEqual(manifest["repository"], REPOSITORY_URL)
+
+        for extension in package["pi"].get("extensions", []):
+            with self.subTest(extension=extension):
+                self.assertTrue(extension.startswith("./"))
+                self.assertTrue(
+                    (REPOSITORY_ROOT / extension.removeprefix("./")).is_file()
+                )
 
 
 class ClaudeMarketplaceLayoutTest(unittest.TestCase):
@@ -120,14 +126,17 @@ class ClaudeMarketplaceLayoutTest(unittest.TestCase):
                     claude_manifest["version"], codex_manifest["version"]
                 )
                 self.assertEqual(
-                    claude_manifest["skills"], codex_manifest["skills"]
+                    claude_manifest.get("skills"), codex_manifest.get("skills")
                 )
 
-                skills_path = claude_manifest["skills"]
-                self.assertTrue(skills_path.startswith("./"))
-                self.assertTrue(
-                    (plugin_root / skills_path.removeprefix("./")).is_dir()
-                )
+                skills_path = claude_manifest.get("skills")
+                if skills_path:
+                    self.assertTrue(skills_path.startswith("./"))
+                    self.assertTrue(
+                        (plugin_root / skills_path.removeprefix("./")).is_dir()
+                    )
+                else:
+                    self.assertTrue((plugin_root / "hooks" / "hooks.json").is_file())
 
     def test_lark_router_is_agent_neutral(self):
         router = (

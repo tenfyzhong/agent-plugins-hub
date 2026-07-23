@@ -1,0 +1,18 @@
+{
+  "name": "agent-guard",
+  "version": "0.1.0+codex.20260723163826",
+  "description": "Block destructive agent commands and send Telegram notifications when runs finish.",
+  "author": {
+    "name": "tenfyzhong",
+    "url": "https://github.com/tenfyzhong"
+  },
+  "homepage": "https://github.com/tenfyzhong/agent-plugins-hub/tree/main/plugins/agent-guard",
+  "repository": "https://github.com/tenfyzhong/agent-plugins-hub",
+  "license": "MIT",
+  "keywords": [
+    "hooks",
+    "security",
+    "telegram",
+    "notifications"
+  ]
+}

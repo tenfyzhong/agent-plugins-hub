@@ -1,0 +1,28 @@
+{
+  "description": "Block destructive Bash commands and send Telegram completion notifications.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^Bash$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "AGENT_GUARD_ROOT=\"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; NODE_USE_ENV_PROXY=1 node \"$AGENT_GUARD_ROOT/hooks/agent-guard.mjs\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "AGENT_GUARD_ROOT=\"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; NODE_USE_ENV_PROXY=1 node \"$AGENT_GUARD_ROOT/hooks/agent-guard.mjs\"",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}
