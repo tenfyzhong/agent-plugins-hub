@@ -101,3 +101,24 @@ test("pi extension registers completion notification on agent_settled", async ()
   assert.match(source, /launchTelegramNotification/);
   assert.doesNotMatch(source, /await sendTelegramNotification/);
 });
+
+test("oh-my-pi extension registers completion notification on session_stop", async () => {
+  const handlers = new Map();
+  const pi = {
+    on(name, handler) {
+      handlers.set(name, handler);
+    },
+  };
+  const previousHost = process.env.AGENT_GUARD_HOST;
+  process.env.AGENT_GUARD_HOST = "oh-my-pi";
+  try {
+    const extension = (await import(`${pathToFileURL(extensionPath).href}?omp-stop-test`)).default;
+    extension(pi);
+  } finally {
+    if (previousHost === undefined) delete process.env.AGENT_GUARD_HOST;
+    else process.env.AGENT_GUARD_HOST = previousHost;
+  }
+
+  assert.equal(typeof handlers.get("session_stop"), "function");
+  assert.equal(handlers.has("agent_settled"), false);
+});
