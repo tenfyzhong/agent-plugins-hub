@@ -17,6 +17,11 @@ function hostName(): string {
   return process.argv.some((arg) => /(^|\/)omp$/.test(arg)) ? "oh-my-pi" : "pi";
 }
 
+function isOhMyPi(): boolean {
+  return process.env.AGENT_GUARD_HOST === "oh-my-pi" ||
+    process.argv.some((arg) => /(^|\/)omp$/.test(arg));
+}
+
 function assistantText(messages: AgentMessageLike[]): string | undefined {
   const assistant = messages.findLast((message) => message.role === "assistant");
   if (!assistant) return undefined;
@@ -31,25 +36,15 @@ function assistantText(messages: AgentMessageLike[]): string | undefined {
 
 export default function agentGuard(pi: ExtensionAPI) {
   let lastMessage: string | undefined;
+  const host = hostName();
 
-  pi.on("tool_call", async (event) => {
-    if (event.toolName !== "bash") return undefined;
-    const reason = dangerousCommandReason(event.input.command);
-    if (!reason) return undefined;
-    return { block: true, reason: `Dangerous command blocked: ${reason}.` };
-  });
-
-  pi.on("agent_end", async (event) => {
-    lastMessage = assistantText(event.messages);
-  });
-
-  pi.on("agent_settled", async (_event, ctx) => {
+  const notifyCompletion = (event: string, ctx: any, sessionId?: string) => {
     try {
       launchTelegramNotification({
-        host: hostName(),
-        event: "agent_settled",
+        host,
+        event,
         model: ctx.model?.id,
-        sessionId: ctx.sessionManager.getSessionId(),
+        sessionId: sessionId || ctx.sessionManager.getSessionId(),
         cwd: ctx.cwd,
         lastMessage,
       });
@@ -58,5 +53,31 @@ export default function agentGuard(pi: ExtensionAPI) {
         ctx.ui.notify(`Agent Guard notification worker failed to start: ${String(error)}`, "warning");
       }
     }
+  };
+
+  pi.on("tool_call", async (event) => {
+    if (event.toolName !== "bash") return undefined;
+    const reason = dangerousCommandReason(event.input.command);
+    if (!reason) return undefined;
+    return { block: true, reason: `Dangerous command blocked: ${reason}.` };
+  });
+
+  if (isOhMyPi()) {
+    pi.on("session_stop", async (event, ctx) => {
+      if (event.stop_hook_active === true) return;
+      lastMessage = event.last_assistant_message
+        ? assistantText([event.last_assistant_message])
+        : assistantText(event.messages);
+      notifyCompletion("session_stop", ctx, event.session_id);
+    });
+    return;
+  }
+
+  pi.on("agent_end", async (event) => {
+    lastMessage = assistantText(event.messages);
+  });
+
+  pi.on("agent_settled", async (_event, ctx) => {
+    notifyCompletion("agent_settled", ctx);
   });
 }
