@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AGENT_GUARD_ROOT=\"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; node \"$AGENT_GUARD_ROOT/hooks/agent-guard.mjs\"",
+            "command": "AGENT_GUARD_ROOT=\"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; NODE_USE_ENV_PROXY=1 node \"$AGENT_GUARD_ROOT/hooks/agent-guard.mjs\"",
             "timeout": 10
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AGENT_GUARD_ROOT=\"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; node \"$AGENT_GUARD_ROOT/hooks/agent-guard.mjs\"",
+            "command": "AGENT_GUARD_ROOT=\"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; NODE_USE_ENV_PROXY=1 node \"$AGENT_GUARD_ROOT/hooks/agent-guard.mjs\"",
             "timeout": 20
           }
         ]

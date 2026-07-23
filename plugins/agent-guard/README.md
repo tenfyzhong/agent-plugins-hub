@@ -22,6 +22,9 @@ You may choose different entries by setting `TELEGRAM_BOT_TOKEN_PASS_ENTRY` and
 If credentials are unavailable, command blocking remains active and notification delivery is
 silently skipped. Set `AGENT_GUARD_DEBUG=1` to surface delivery errors.
 
+Codex and Claude Code hook processes enable Node.js environment-proxy support, so Telegram
+delivery honors inherited `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`, and lowercase equivalents.
+
 ## Host integration
 
 - Codex and Claude Code discover `hooks/hooks.json` from the installed plugin.
