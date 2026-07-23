@@ -29,7 +29,7 @@ metadata:
 ## 使用边界
 
 - Base 业务操作只使用 `lark-cli base +...` shortcut，不使用旧聚合式 `+table / +field / +record / +view / +history / +workspace`。
-- 本轮 Base 不依赖 `lark-cli schema`。SKILL 只保留路由、风险和复杂 JSON/DSL；简单命令由命令自身的参数、tips 和错误恢复承接。
+- 执行 update 前必须先查当前 shortcut 的 `--help` 或对应 reference。若命令要求完整配置，首次请求必须基于可信的当前配置执行 read-modify-write：只修改用户明确指定的内容，保留其他仍适用的可写配置，并按命令要求的结构提交。若命令支持局部／delta update，按其契约提交最小合法 payload；不得以不完整请求试错补参。
 - 用户要把 Excel / CSV / `.base` 导入成 Base 时，先转 `lark-cli drive +import --type bitable`，导入完成后再回到 Base 命令。
 - 认证、初始化、scope、身份切换、权限不足恢复属于 `lark-shared`；Base 文档只保留会影响 Base 路径选择的权限规则。
 
@@ -104,7 +104,6 @@ metadata:
 
 ## 写入前置规则
 
-- 更新前先看命令说明：需要完整提交时，先读取并补齐当前配置，只改用户指定的内容，再按命令要求提交；支持局部修改时，按命令说明和 reference 提交最小合法 payload。
 - 优先用写入返回确认结果；返回信息不足或任务明确要求核验时，再读回。
 - 写记录前先读字段结构；只写存储字段。系统字段、附件字段、`formula`、`lookup` 不作为普通记录写入目标。
 - 附件上传、下载、删除走专用 `+record-*-attachment` 命令。
