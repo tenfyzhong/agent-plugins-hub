@@ -27,8 +27,8 @@ Completion notifications run in a detached background worker, so credential look
 delivery do not delay the agent's foreground process. Delivery is best-effort: a worker interrupted
 by immediate host shutdown may not finish sending its notification.
 
-Codex and Claude Code hook processes enable Node.js environment-proxy support, so Telegram
-delivery honors inherited `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`, and lowercase equivalents.
+Notification workers enable Node.js environment-proxy support on every host, so Telegram delivery
+honors inherited `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`, and lowercase equivalents.
 
 ## Host integration
 

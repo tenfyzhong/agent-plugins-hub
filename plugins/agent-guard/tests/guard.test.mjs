@@ -67,7 +67,7 @@ test("builds an escaped, host-specific Telegram message", () => {
 test("detects Codex when Claude compatibility variables are also present", () => {
   assert.equal(
     detectAgentHost({
-      CODEX_THREAD_ID: "thread-1",
+      PLUGIN_ROOT: "/tmp/plugin",
       CLAUDE_PLUGIN_ROOT: "/tmp/plugin",
     }),
     "Codex",
@@ -156,6 +156,7 @@ test("launches Telegram notifications in a detached background worker", () => {
   });
   assert.equal(spawned.options.detached, true);
   assert.deepEqual(spawned.options.stdio, ["pipe", "ignore", "ignore"]);
+  assert.equal(spawned.options.env.NODE_USE_ENV_PROXY, "1");
   assert.equal(inputUnreferenced, true);
   assert.equal(unreferenced, true);
 });

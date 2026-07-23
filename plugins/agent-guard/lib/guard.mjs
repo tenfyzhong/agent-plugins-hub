@@ -242,7 +242,7 @@ export function htmlEscape(value) {
 
 export function detectAgentHost(env = process.env) {
   if (env.AGENT_GUARD_HOST) return env.AGENT_GUARD_HOST;
-  if (env.CODEX_THREAD_ID) return "Codex";
+  if (env.PLUGIN_ROOT || env.CODEX_THREAD_ID) return "Codex";
   return env.CLAUDE_PLUGIN_ROOT ? "Claude Code" : "Codex";
 }
 
@@ -296,6 +296,7 @@ export function launchTelegramNotification(
   const worker = spawnImpl(process.execPath, [workerPath], {
     detached: true,
     stdio: ["pipe", "ignore", "ignore"],
+    env: { ...process.env, NODE_USE_ENV_PROXY: "1" },
   });
   worker.stdin.on("error", () => {});
   worker.stdin.end(JSON.stringify(notification));
