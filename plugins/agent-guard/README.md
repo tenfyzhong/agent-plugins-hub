@@ -20,7 +20,12 @@ You may choose different entries by setting `TELEGRAM_BOT_TOKEN_PASS_ENTRY` and
 `TELEGRAM_CHAT_ID` in the environment inherited by the agent process.
 
 If credentials are unavailable, command blocking remains active and notification delivery is
-silently skipped. Set `AGENT_GUARD_DEBUG=1` to surface delivery errors.
+silently skipped. Set `AGENT_GUARD_DEBUG=1` to surface worker launch errors where the host exposes
+hook stderr or UI notifications. Background delivery failures are not reported to the foreground.
+
+Completion notifications run in a detached background worker, so credential lookup and Telegram
+delivery do not delay the agent's foreground process. Delivery is best-effort: a worker interrupted
+by immediate host shutdown may not finish sending its notification.
 
 Codex and Claude Code hook processes enable Node.js environment-proxy support, so Telegram
 delivery honors inherited `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`, and lowercase equivalents.

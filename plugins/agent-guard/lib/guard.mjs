@@ -1,5 +1,6 @@
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const SHELLS = new Set(["bash", "dash", "fish", "sh", "zsh"]);
 const HOST_SHUTDOWN_COMMANDS = new Set(["halt", "poweroff", "reboot", "shutdown"]);
@@ -283,6 +284,23 @@ export async function sendTelegramNotification({ token, chatId, text, fetchImpl 
   if (!response.ok) {
     throw new Error(`Telegram API returned ${response.status}`);
   }
+}
+
+export function launchTelegramNotification(
+  notification,
+  {
+    spawnImpl = spawn,
+    workerPath = fileURLToPath(new URL("../hooks/notification-worker.mjs", import.meta.url)),
+  } = {},
+) {
+  const worker = spawnImpl(process.execPath, [workerPath], {
+    detached: true,
+    stdio: ["pipe", "ignore", "ignore"],
+  });
+  worker.stdin.on("error", () => {});
+  worker.stdin.end(JSON.stringify(notification));
+  worker.stdin.unref();
+  worker.unref();
 }
 
 function readPassEntry(entry, execFile = execFileSync) {

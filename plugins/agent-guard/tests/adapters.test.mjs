@@ -97,4 +97,7 @@ test("pi extension registers completion notification on agent_settled", async ()
   extension(pi);
 
   assert.equal(typeof handlers.get("agent_settled"), "function");
+  const source = fs.readFileSync(extensionPath, "utf8");
+  assert.match(source, /launchTelegramNotification/);
+  assert.doesNotMatch(source, /await sendTelegramNotification/);
 });

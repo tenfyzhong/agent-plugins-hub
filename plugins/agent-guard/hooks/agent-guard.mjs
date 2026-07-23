@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
 import {
-  buildTelegramMessage,
   detectAgentHost,
   dangerousCommandReason,
-  resolveTelegramCredentials,
-  sendTelegramNotification,
+  launchTelegramNotification,
 } from "../lib/guard.mjs";
 
 function readStdin() {
@@ -41,12 +39,9 @@ function handlePreToolUse(payload) {
   );
 }
 
-async function handleStop(payload) {
+function handleStop(payload) {
   if (shouldSkipStop(payload)) return;
-  const credentials = resolveTelegramCredentials();
-  if (!credentials) return;
-
-  const text = buildTelegramMessage({
+  launchTelegramNotification({
     host: detectAgentHost(),
     event: payload.hook_event_name || "Stop",
     model: payload.model,
@@ -54,7 +49,6 @@ async function handleStop(payload) {
     cwd: payload.cwd || process.cwd(),
     lastMessage: payload.last_assistant_message?.slice(0, 3000),
   });
-  await sendTelegramNotification({ ...credentials, text });
 }
 
 async function main() {
@@ -68,7 +62,7 @@ async function main() {
   if (payload.hook_event_name === "PreToolUse") {
     handlePreToolUse(payload);
   } else if (payload.hook_event_name === "Stop") {
-    await handleStop(payload);
+    handleStop(payload);
   }
 }
 

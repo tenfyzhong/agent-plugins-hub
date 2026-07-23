@@ -5,6 +5,7 @@ import {
   buildTelegramMessage,
   detectAgentHost,
   dangerousCommandReason,
+  launchTelegramNotification,
   resolveTelegramCredentials,
   sendTelegramNotification,
 } from "../lib/guard.mjs";
@@ -120,6 +121,43 @@ test("reports Telegram API failures", async () => {
     }),
     /Telegram API returned 401/,
   );
+});
+
+test("launches Telegram notifications in a detached background worker", () => {
+  let spawned;
+  let unreferenced = false;
+  let input;
+  let inputUnreferenced = false;
+  const spawnImpl = (command, args, options) => {
+    spawned = { command, args, options };
+    return {
+      stdin: {
+        end(value) { input = value; },
+        on() {},
+        unref() { inputUnreferenced = true; },
+      },
+      unref() { unreferenced = true; },
+    };
+  };
+
+  launchTelegramNotification(
+    { host: "Codex", event: "Stop", cwd: "/tmp/project", lastMessage: "done" },
+    { spawnImpl, workerPath: "/tmp/notification-worker.mjs" },
+  );
+
+  assert.equal(spawned.command, process.execPath);
+  assert.equal(spawned.args[0], "/tmp/notification-worker.mjs");
+  assert.equal(spawned.args.length, 1);
+  assert.deepEqual(JSON.parse(input), {
+    host: "Codex",
+    event: "Stop",
+    cwd: "/tmp/project",
+    lastMessage: "done",
+  });
+  assert.equal(spawned.options.detached, true);
+  assert.deepEqual(spawned.options.stdio, ["pipe", "ignore", "ignore"]);
+  assert.equal(inputUnreferenced, true);
+  assert.equal(unreferenced, true);
 });
 
 test("resolves credentials from environment variables first", () => {

@@ -1,8 +1,6 @@
 import {
-  buildTelegramMessage,
   dangerousCommandReason,
-  resolveTelegramCredentials,
-  sendTelegramNotification,
+  launchTelegramNotification,
 } from "../lib/guard.mjs";
 
 type AgentMessageLike = {
@@ -46,22 +44,18 @@ export default function agentGuard(pi: ExtensionAPI) {
   });
 
   pi.on("agent_settled", async (_event, ctx) => {
-    const credentials = resolveTelegramCredentials();
-    if (!credentials) return;
-
-    const text = buildTelegramMessage({
-      host: hostName(),
-      event: "agent_settled",
-      model: ctx.model?.id,
-      sessionId: ctx.sessionManager.getSessionId(),
-      cwd: ctx.cwd,
-      lastMessage,
-    });
     try {
-      await sendTelegramNotification({ ...credentials, text });
+      launchTelegramNotification({
+        host: hostName(),
+        event: "agent_settled",
+        model: ctx.model?.id,
+        sessionId: ctx.sessionManager.getSessionId(),
+        cwd: ctx.cwd,
+        lastMessage,
+      });
     } catch (error) {
       if (process.env.AGENT_GUARD_DEBUG) {
-        ctx.ui.notify(`Agent Guard Telegram notification failed: ${String(error)}`, "warning");
+        ctx.ui.notify(`Agent Guard notification worker failed to start: ${String(error)}`, "warning");
       }
     }
   });
