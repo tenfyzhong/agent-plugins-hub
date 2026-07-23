@@ -7,6 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const pluginRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const hookPath = path.join(pluginRoot, "hooks", "agent-guard.mjs");
+const ompHookPath = path.join(pluginRoot, "hooks", "post", "agent-guard.ts");
 const extensionPath = path.join(pluginRoot, "extensions", "agent-guard.ts");
 
 test("hook commands enable Node environment proxy support", () => {
@@ -112,7 +113,7 @@ test("oh-my-pi extension registers completion notification on session_stop", asy
   const previousHost = process.env.AGENT_GUARD_HOST;
   process.env.AGENT_GUARD_HOST = "oh-my-pi";
   try {
-    const extension = (await import(`${pathToFileURL(extensionPath).href}?omp-stop-test`)).default;
+    const extension = (await import(`${pathToFileURL(ompHookPath).href}?omp-stop-test`)).default;
     extension(pi);
   } finally {
     if (previousHost === undefined) delete process.env.AGENT_GUARD_HOST;

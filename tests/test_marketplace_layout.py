@@ -85,6 +85,24 @@ class MarketplaceLayoutTest(unittest.TestCase):
                     (REPOSITORY_ROOT / extension.removeprefix("./")).is_file()
                 )
 
+    def test_agent_guard_uses_native_omp_plugin_manifests(self):
+        repository_package = json.loads(
+            (REPOSITORY_ROOT / "package.json").read_text(encoding="utf-8")
+        )
+        plugin_package = json.loads(
+            (
+                REPOSITORY_ROOT / "plugins" / "agent-guard" / "package.json"
+            ).read_text(encoding="utf-8")
+        )
+
+        repository_entry = "./plugins/agent-guard/hooks/post/agent-guard.ts"
+        plugin_entry = "./hooks/post/agent-guard.ts"
+        self.assertEqual(repository_package["omp"]["extensions"], [repository_entry])
+        self.assertEqual(plugin_package["omp"]["extensions"], [plugin_entry])
+        self.assertTrue(
+            (REPOSITORY_ROOT / repository_entry.removeprefix("./")).is_file()
+        )
+
 
 class ClaudeMarketplaceLayoutTest(unittest.TestCase):
     def test_marketplace_entries_follow_repo_layout(self):
