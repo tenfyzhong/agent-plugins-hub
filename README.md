@@ -12,6 +12,7 @@ package metadata alongside shared Agent Skills.
 ├── .claude-plugin/marketplace.json     # Claude Code marketplace catalog
 ├── .github/workflows/                  # Marketplace automation
 ├── plugins/
+│   ├── agent-guard/                      # Cross-agent safety hooks
 │   └── lark-cli-skills/
 │       ├── .claude-plugin/plugin.json  # Claude Code plugin manifest
 │       ├── .codex-plugin/plugin.json   # Codex plugin manifest
@@ -46,6 +47,7 @@ Then install plugins through the Codex plugin browser or by name:
 
 ```bash
 codex plugin add lark-cli-skills@tenfyzhong-agent-plugins-hub
+codex plugin add agent-guard@tenfyzhong-agent-plugins-hub
 ```
 
 ## Install with Claude Code
@@ -66,6 +68,7 @@ Then install the plugin:
 
 ```bash
 claude plugin install lark-cli-skills@tenfyzhong-agent-plugins-hub
+claude plugin install agent-guard@tenfyzhong-agent-plugins-hub
 ```
 
 Claude Code namespaces plugin skills. Invoke the router explicitly with
@@ -87,6 +90,14 @@ pi install .
 
 Invoke the router explicitly with `/skill:lark`, or let Pi select it from the
 request context.
+
+## Agent Guard
+
+The `agent-guard` plugin blocks known destructive shell commands before they
+run and can send a Telegram notification when an agent run finishes. It uses
+native hooks for Codex and Claude Code and a shared extension for Pi and
+oh-my-pi. See [`plugins/agent-guard/README.md`](plugins/agent-guard/README.md)
+for its blocked-command policy and credential setup.
 
 ## Lark CLI Skills
 

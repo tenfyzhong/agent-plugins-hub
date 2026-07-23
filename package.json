@@ -10,6 +10,9 @@
   ],
   "license": "MIT",
   "pi": {
+    "extensions": [
+      "./plugins/agent-guard/extensions/agent-guard.ts"
+    ],
     "skills": [
       "./plugins/lark-cli-skills/skills"
     ]
