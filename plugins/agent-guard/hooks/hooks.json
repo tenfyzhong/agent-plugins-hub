@@ -1,5 +1,5 @@
 {
-  "description": "Block destructive Bash commands and send Telegram completion notifications.",
+  "description": "Block destructive Bash commands and send interactive completion notifications.",
   "hooks": {
     "PreToolUse": [
       {

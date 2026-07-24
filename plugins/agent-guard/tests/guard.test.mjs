@@ -5,9 +5,11 @@ import {
   buildTelegramMessage,
   detectAgentHost,
   dangerousCommandReason,
+  isNonInteractiveHookSession,
   launchTelegramNotification,
   resolveTelegramCredentials,
   sendTelegramNotification,
+  shouldNotifyExtensionContext,
 } from "../lib/guard.mjs";
 
 const blockedCommands = [
@@ -83,6 +85,72 @@ test("allows the detected host to be overridden", () => {
     detectAgentHost({ AGENT_GUARD_HOST: "Custom Agent", CODEX_THREAD_ID: "thread-1" }),
     "Custom Agent",
   );
+});
+
+test("detects non-interactive Codex exec sessions from transcript metadata", () => {
+  const nonInteractive = isNonInteractiveHookSession(
+    { transcript_path: "/tmp/codex-exec.jsonl" },
+    {
+      env: {},
+      readTranscriptStart: () => JSON.stringify({
+        type: "session_meta",
+        payload: { originator: "codex_exec", source: "exec" },
+      }),
+    },
+  );
+
+  assert.equal(nonInteractive, true);
+});
+
+test("keeps interactive Codex sessions eligible for notifications", () => {
+  const nonInteractive = isNonInteractiveHookSession(
+    { transcript_path: "/tmp/codex-tui.jsonl" },
+    {
+      env: {},
+      readTranscriptStart: () => JSON.stringify({
+        type: "session_meta",
+        payload: { originator: "codex-tui", source: "cli" },
+      }),
+    },
+  );
+
+  assert.equal(nonInteractive, false);
+});
+
+test("detects ephemeral Codex exec sessions from the parent command", () => {
+  const nonInteractive = isNonInteractiveHookSession(
+    {},
+    {
+      env: {},
+      readParentCommands: () => [
+        "/bin/sh -c node /tmp/agent-guard.mjs",
+        "/opt/homebrew/bin/codex exec --ephemeral do-work",
+      ],
+    },
+  );
+
+  assert.equal(nonInteractive, true);
+});
+
+test("detects non-interactive Claude Code sessions from their entrypoint", () => {
+  assert.equal(
+    isNonInteractiveHookSession({}, { env: { CLAUDE_CODE_ENTRYPOINT: "sdk-cli" } }),
+    true,
+  );
+  assert.equal(
+    isNonInteractiveHookSession(
+      {},
+      { env: { CLAUDE_CODE_ENTRYPOINT: "cli" }, readParentCommands: () => [] },
+    ),
+    false,
+  );
+});
+
+test("only extension contexts with an interactive UI send completion notifications", () => {
+  assert.equal(shouldNotifyExtensionContext({ hasUI: true, mode: "tui" }), true);
+  assert.equal(shouldNotifyExtensionContext({ hasUI: false, mode: "print" }), false);
+  assert.equal(shouldNotifyExtensionContext({ mode: "json" }), false);
+  assert.equal(shouldNotifyExtensionContext({ mode: "rpc" }), false);
 });
 
 test("posts JSON to Telegram without exposing credentials in the body", async () => {

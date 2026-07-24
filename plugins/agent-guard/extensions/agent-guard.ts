@@ -1,6 +1,7 @@
 import {
   dangerousCommandReason,
   launchTelegramNotification,
+  shouldNotifyExtensionContext,
 } from "../lib/guard.mjs";
 
 type AgentMessageLike = {
@@ -33,6 +34,7 @@ export function registerAgentGuard(pi: ExtensionAPI, host = hostName()) {
   let lastMessage: string | undefined;
 
   const notifyCompletion = (event: string, ctx: any, sessionId?: string) => {
+    if (!shouldNotifyExtensionContext(ctx)) return;
     try {
       launchTelegramNotification({
         host,

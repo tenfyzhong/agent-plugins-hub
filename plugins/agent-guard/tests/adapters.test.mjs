@@ -69,6 +69,19 @@ test("stop hook is a no-op when Telegram credentials are absent", () => {
   assert.equal(result.stdout, "");
 });
 
+test("stop hook skips Telegram notifications for non-interactive sessions", () => {
+  const result = runHook(
+    { hook_event_name: "Stop", cwd: "/tmp/project", last_assistant_message: "done" },
+    {
+      AGENT_GUARD_NODE: path.join(pluginRoot, "missing-node"),
+      CLAUDE_CODE_ENTRYPOINT: "sdk-cli",
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stderr, "");
+});
+
 test("pi extension blocks dangerous bash and allows safe bash", async () => {
   const handlers = new Map();
   const pi = {
@@ -100,6 +113,7 @@ test("pi extension registers completion notification on agent_settled", async ()
   assert.equal(typeof handlers.get("agent_settled"), "function");
   const source = fs.readFileSync(extensionPath, "utf8");
   assert.match(source, /launchTelegramNotification/);
+  assert.match(source, /shouldNotifyExtensionContext\(ctx\)/);
   assert.doesNotMatch(source, /await sendTelegramNotification/);
 });
 

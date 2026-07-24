@@ -103,7 +103,7 @@ omp plugin install agent-guard@tenfyzhong-agent-plugins-hub
 ## Agent Guard
 
 The `agent-guard` plugin blocks known destructive shell commands before they
-run and can send a Telegram notification when an agent run finishes. It uses
+run and can send a Telegram notification when an interactive agent run finishes. It uses
 native hooks for Codex, Claude Code, and Oh My Pi, plus a Pi extension. See
 [`plugins/agent-guard/README.md`](plugins/agent-guard/README.md)
 for its blocked-command policy and credential setup.
