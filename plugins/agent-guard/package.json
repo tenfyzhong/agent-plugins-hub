@@ -1,9 +1,9 @@
 {
   "name": "agent-guard",
-  "version": "0.1.0+codex.20260723094652",
+  "version": "0.1.0+codex.20260724095102",
   "private": true,
   "type": "module",
-  "description": "Cross-agent destructive-command guard and Telegram completion notifier.",
+  "description": "Cross-agent destructive-command guard and interactive Telegram completion notifier.",
   "license": "MIT",
   "omp": {
     "extensions": [

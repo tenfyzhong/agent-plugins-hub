@@ -3,7 +3,8 @@
 Agent Guard supports Codex, Claude Code, pi, and oh-my-pi. It provides two protections:
 
 - denies known destructive shell commands before an agent runs them;
-- sends a Telegram message after an agent run finishes and no queued continuation remains.
+- sends a Telegram message after an interactive agent run finishes and no queued continuation
+  remains.
 
 ## Telegram credentials
 
@@ -26,6 +27,9 @@ hook stderr or UI notifications. Background delivery failures are not reported t
 Completion notifications run in a detached background worker, so credential lookup and Telegram
 delivery do not delay the agent's foreground process. Delivery is best-effort: a worker interrupted
 by immediate host shutdown may not finish sending its notification.
+
+Non-interactive runs, including `codex exec`, Claude Code print/SDK sessions, and pi or oh-my-pi
+print, JSON, and RPC modes, do not send Telegram notifications.
 
 Notification workers enable Node.js environment-proxy support on every host, so Telegram delivery
 honors inherited `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`, and lowercase equivalents.

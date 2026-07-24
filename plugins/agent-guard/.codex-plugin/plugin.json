@@ -1,7 +1,7 @@
 {
   "name": "agent-guard",
-  "version": "0.1.0+codex.20260723094652",
-  "description": "Block destructive agent commands and send Telegram notifications when runs finish.",
+  "version": "0.1.0+codex.20260724095102",
+  "description": "Block destructive agent commands and notify Telegram when interactive runs finish.",
   "author": {
     "name": "tenfyzhong",
     "url": "https://github.com/tenfyzhong"
@@ -17,8 +17,8 @@
   ],
   "interface": {
     "displayName": "Agent Guard",
-    "shortDescription": "Block destructive commands and notify Telegram on completion.",
-    "longDescription": "Cross-agent lifecycle hooks that deny known destructive shell commands and send a Telegram message after an agent run settles.",
+    "shortDescription": "Block destructive commands and notify on interactive completion.",
+    "longDescription": "Cross-agent lifecycle hooks that deny known destructive shell commands and send a Telegram message after an interactive agent run settles.",
     "developerName": "tenfyzhong",
     "category": "Productivity",
     "capabilities": [

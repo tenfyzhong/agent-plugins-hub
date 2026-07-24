@@ -1,4 +1,5 @@
 import { execFileSync, spawn } from "node:child_process";
+import { closeSync, openSync, readSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -244,6 +245,94 @@ export function detectAgentHost(env = process.env) {
   if (env.AGENT_GUARD_HOST) return env.AGENT_GUARD_HOST;
   if (env.PLUGIN_ROOT || env.CODEX_THREAD_ID) return "Codex";
   return env.CLAUDE_PLUGIN_ROOT ? "Claude Code" : "Codex";
+}
+
+function readTranscriptStart(transcriptPath) {
+  const buffer = Buffer.alloc(64 * 1024);
+  const descriptor = openSync(transcriptPath, "r");
+  try {
+    const bytesRead = readSync(descriptor, buffer, 0, buffer.length, 0);
+    return buffer.toString("utf8", 0, bytesRead).split(/\r?\n/, 1)[0];
+  } finally {
+    closeSync(descriptor);
+  }
+}
+
+function isNonInteractiveClaudeEntrypoint(entrypoint) {
+  if (typeof entrypoint !== "string") return false;
+  return (
+    /(^|[-_])sdk($|[-_])/i.test(entrypoint) ||
+    entrypoint === "agent_sdk" ||
+    entrypoint.includes("github-action")
+  );
+}
+
+function readParentCommands(startPid = process.ppid, execFile = execFileSync) {
+  const commands = [];
+  let pid = startPid;
+
+  for (let depth = 0; depth < 6 && Number.isInteger(pid) && pid > 1; depth += 1) {
+    const output = execFile("ps", ["-o", "ppid=", "-o", "command=", "-p", String(pid)], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    });
+    const match = /^\s*(\d+)\s+(.+)$/.exec(output.trim());
+    if (!match) break;
+    commands.push(match[2]);
+    pid = Number(match[1]);
+  }
+
+  return commands;
+}
+
+function isCodexExecCommand(command) {
+  if (typeof command !== "string") return false;
+  const match = /^\s*(?:"([^"]+)"|'([^']+)'|(\S+))\s+(\S+)/.exec(command);
+  if (!match || match[4] !== "exec") return false;
+  const executable = path.basename(match[1] || match[2] || match[3]);
+  return executable === "codex" || executable.startsWith("codex-");
+}
+
+export function isNonInteractiveHookSession(
+  payload,
+  {
+    env = process.env,
+    readTranscriptStart: readStart = readTranscriptStart,
+    readParentCommands: readParents = readParentCommands,
+  } = {},
+) {
+  if (isNonInteractiveClaudeEntrypoint(env.CLAUDE_CODE_ENTRYPOINT)) return true;
+
+  if (typeof payload?.transcript_path === "string") {
+    try {
+      const record = JSON.parse(readStart(payload.transcript_path));
+      const metadata = record?.payload && typeof record.payload === "object" ? record.payload : record;
+      if (
+        metadata?.originator === "codex_exec" ||
+        metadata?.source === "exec" ||
+        isNonInteractiveClaudeEntrypoint(metadata?.entrypoint)
+      ) {
+        return true;
+      }
+      if (metadata?.originator || metadata?.source || metadata?.entrypoint) return false;
+    } catch {
+      // Fall back to the process tree for ephemeral or unavailable transcripts.
+    }
+  }
+
+  try {
+    return readParents().some(isCodexExecCommand);
+  } catch {
+    return false;
+  }
+}
+
+export function shouldNotifyExtensionContext(context) {
+  if (typeof context?.hasUI === "boolean") return context.hasUI;
+  if (typeof context?.mode === "string") {
+    return context.mode === "tui" || context.mode === "interactive";
+  }
+  return true;
 }
 
 export function buildTelegramMessage({

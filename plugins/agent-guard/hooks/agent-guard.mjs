@@ -3,6 +3,7 @@
 import {
   detectAgentHost,
   dangerousCommandReason,
+  isNonInteractiveHookSession,
   launchTelegramNotification,
 } from "../lib/guard.mjs";
 
@@ -40,7 +41,7 @@ function handlePreToolUse(payload) {
 }
 
 function handleStop(payload) {
-  if (shouldSkipStop(payload)) return;
+  if (shouldSkipStop(payload) || isNonInteractiveHookSession(payload)) return;
   launchTelegramNotification({
     host: detectAgentHost(),
     event: payload.hook_event_name || "Stop",
