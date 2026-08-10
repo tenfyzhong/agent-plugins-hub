@@ -1,5 +1,15 @@
 import { execFileSync, spawn } from "node:child_process";
-import { closeSync, openSync, readSync } from "node:fs";
+import {
+  closeSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  readSync,
+  renameSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -335,6 +345,194 @@ export function shouldNotifyExtensionContext(context) {
   return true;
 }
 
+function normalizeRateLimitWindow(window) {
+  if (!window || typeof window !== "object") return undefined;
+  const usedPercent = Number(window.usedPercent ?? window.used_percent ?? window.used_percentage);
+  if (!Number.isFinite(usedPercent)) return undefined;
+  const resetsAt = Number(window.resetsAt ?? window.resets_at);
+  return {
+    usedPercent: Math.min(100, Math.max(0, usedPercent)),
+    ...(Number.isFinite(resetsAt) ? { resetsAt } : {}),
+  };
+}
+
+function normalizeCodexRateLimits(rateLimits) {
+  if (!rateLimits || typeof rateLimits !== "object") return undefined;
+  const windows = [rateLimits.primary, rateLimits.secondary]
+    .map((window) => ({ raw: window, normalized: normalizeRateLimitWindow(window) }))
+    .filter(({ normalized }) => normalized);
+  const fiveHour = windows.find(({ raw }) => Number(raw.window_minutes) === 300)?.normalized;
+  const weekly = windows.find(({ raw }) => Number(raw.window_minutes) === 10080)?.normalized;
+  const normalized = {
+    ...(fiveHour ? { fiveHour } : {}),
+    ...(weekly ? { weekly } : {}),
+  };
+  return Object.keys(normalized).length > 0 ? normalized : undefined;
+}
+
+export function normalizeClaudeRateLimits(input) {
+  const rateLimits = input?.rate_limits;
+  if (!rateLimits || typeof rateLimits !== "object") return undefined;
+  const fiveHour = normalizeRateLimitWindow(rateLimits.five_hour);
+  const weekly = normalizeRateLimitWindow(rateLimits.seven_day);
+  const normalized = {
+    ...(fiveHour ? { fiveHour } : {}),
+    ...(weekly ? { weekly } : {}),
+  };
+  return Object.keys(normalized).length > 0 ? normalized : undefined;
+}
+
+function codexRateLimitsFromRecord(record) {
+  if (record?.payload?.type !== "token_count") return undefined;
+  return normalizeCodexRateLimits(record.payload.rate_limits);
+}
+
+export function extractCodexRateLimits(transcriptPath) {
+  if (typeof transcriptPath !== "string" || !transcriptPath) return undefined;
+
+  let descriptor;
+  try {
+    descriptor = openSync(transcriptPath, "r");
+    let position = statSync(transcriptPath).size;
+    let trailing = Buffer.alloc(0);
+    const chunkSize = 64 * 1024;
+
+    const parseLine = (line) => {
+      if (line.length === 0) return undefined;
+      try {
+        return codexRateLimitsFromRecord(JSON.parse(line.toString("utf8")));
+      } catch {
+        return undefined;
+      }
+    };
+
+    while (position > 0) {
+      const length = Math.min(chunkSize, position);
+      position -= length;
+      const chunk = Buffer.allocUnsafe(length);
+      const bytesRead = readSync(descriptor, chunk, 0, length, position);
+      const combined = Buffer.concat([chunk.subarray(0, bytesRead), trailing]);
+      let lineEnd = combined.length;
+
+      for (let index = combined.length - 1; index >= 0; index -= 1) {
+        if (combined[index] !== 0x0a) continue;
+        const limits = parseLine(combined.subarray(index + 1, lineEnd));
+        if (limits) return limits;
+        lineEnd = index;
+      }
+      trailing = combined.subarray(0, lineEnd);
+    }
+
+    return parseLine(trailing);
+  } catch {
+    return undefined;
+  } finally {
+    if (descriptor !== undefined) closeSync(descriptor);
+  }
+}
+
+function rateLimitCacheRoot(env = process.env) {
+  const base = env.XDG_CACHE_HOME || path.join(env.HOME || os.homedir(), ".cache");
+  return path.join(base, "agent-guard", "claude-rate-limits");
+}
+
+function rateLimitCachePath(sessionId, cacheRoot) {
+  if (typeof sessionId !== "string" || !sessionId) return undefined;
+  return path.join(cacheRoot, `${Buffer.from(sessionId).toString("base64url")}.json`);
+}
+
+export function cacheClaudeRateLimits(input, { cacheRoot = rateLimitCacheRoot() } = {}) {
+  const limits = normalizeClaudeRateLimits(input);
+  const cachePath = rateLimitCachePath(input?.session_id, cacheRoot);
+  if (!limits || !cachePath) return undefined;
+
+  try {
+    mkdirSync(cacheRoot, { recursive: true, mode: 0o700 });
+    const temporaryPath = `${cachePath}.${process.pid}.tmp`;
+    writeFileSync(temporaryPath, JSON.stringify(limits), { mode: 0o600 });
+    renameSync(temporaryPath, cachePath);
+    return limits;
+  } catch {
+    return undefined;
+  }
+}
+
+export function readClaudeRateLimits(sessionId, { cacheRoot = rateLimitCacheRoot() } = {}) {
+  const cachePath = rateLimitCachePath(sessionId, cacheRoot);
+  if (!cachePath) return undefined;
+  try {
+    const cached = JSON.parse(readFileSync(cachePath, "utf8"));
+    const fiveHour = normalizeRateLimitWindow(cached.fiveHour);
+    const weekly = normalizeRateLimitWindow(cached.weekly);
+    const normalized = {
+      ...(fiveHour ? { fiveHour } : {}),
+      ...(weekly ? { weekly } : {}),
+    };
+    return Object.keys(normalized).length > 0 ? normalized : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function resolveNotificationRateLimits(
+  notification,
+  { cacheRoot = rateLimitCacheRoot() } = {},
+) {
+  if (notification?.rateLimits) {
+    const fiveHour = normalizeRateLimitWindow(notification.rateLimits.fiveHour);
+    const weekly = normalizeRateLimitWindow(notification.rateLimits.weekly);
+    const normalized = {
+      ...(fiveHour ? { fiveHour } : {}),
+      ...(weekly ? { weekly } : {}),
+    };
+    if (Object.keys(normalized).length > 0) return normalized;
+  }
+  if (notification?.host === "Codex") {
+    return extractCodexRateLimits(notification.transcriptPath);
+  }
+  if (notification?.host === "Claude Code") {
+    return readClaudeRateLimits(notification.sessionId, { cacheRoot });
+  }
+  return undefined;
+}
+
+export async function resolveNotificationRateLimitsAfterRefresh(
+  notification,
+  {
+    waitImpl = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
+    ...options
+  } = {},
+) {
+  if (notification?.host === "Claude Code") await waitImpl(500);
+  return resolveNotificationRateLimits(notification, options);
+}
+
+function formatPercent(value) {
+  return `${Math.round(value * 10) / 10}%`;
+}
+
+function remainingPercent(window) {
+  return Math.min(100, Math.max(0, 100 - window.usedPercent));
+}
+
+export function buildRateLimitStatusLine(rateLimits) {
+  const parts = [];
+  if (rateLimits?.fiveHour) {
+    parts.push(`5h remaining: ${formatPercent(remainingPercent(rateLimits.fiveHour))}`);
+  }
+  if (rateLimits?.weekly) {
+    parts.push(`weekly remaining: ${formatPercent(remainingPercent(rateLimits.weekly))}`);
+  }
+  return parts.join(" | ");
+}
+
+function rateLimitMessageLine(label, window) {
+  const reset = Number.isFinite(window.resetsAt)
+    ? ` (resets <code>${htmlEscape(new Date(window.resetsAt * 1000).toISOString())}</code>)`
+    : "";
+  return `<b>${label} remaining:</b> <code>${formatPercent(remainingPercent(window))}</code>${reset}`;
+}
+
 export function buildTelegramMessage({
   host,
   event,
@@ -342,6 +540,7 @@ export function buildTelegramMessage({
   sessionId,
   cwd,
   lastMessage,
+  rateLimits,
   timestamp = new Date().toISOString(),
 }) {
   const lines = [
@@ -352,6 +551,8 @@ export function buildTelegramMessage({
   if (model) lines.push(`<b>model:</b> <code>${htmlEscape(model)}</code>`);
   if (sessionId) lines.push(`<b>session id:</b> <code>${htmlEscape(sessionId)}</code>`);
   if (cwd) lines.push(`<b>pwd:</b> <code>${htmlEscape(cwd)}</code>`);
+  if (rateLimits?.fiveHour) lines.push(rateLimitMessageLine("5h", rateLimits.fiveHour));
+  if (rateLimits?.weekly) lines.push(rateLimitMessageLine("weekly", rateLimits.weekly));
   if (lastMessage) lines.push(`<b>last assistant message:</b>\n<pre>${htmlEscape(lastMessage)}</pre>`);
   return lines.join("\n");
 }

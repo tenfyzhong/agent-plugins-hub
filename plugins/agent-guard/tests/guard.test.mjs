@@ -1,12 +1,22 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import {
+  buildRateLimitStatusLine,
   buildTelegramMessage,
+  cacheClaudeRateLimits,
   detectAgentHost,
   dangerousCommandReason,
+  extractCodexRateLimits,
   isNonInteractiveHookSession,
   launchTelegramNotification,
+  normalizeClaudeRateLimits,
+  readClaudeRateLimits,
+  resolveNotificationRateLimits,
+  resolveNotificationRateLimitsAfterRefresh,
   resolveTelegramCredentials,
   sendTelegramNotification,
   shouldNotifyExtensionContext,
@@ -64,6 +74,184 @@ test("builds an escaped, host-specific Telegram message", () => {
   assert.match(message, /claude&amp;sonnet/);
   assert.match(message, /\/tmp\/a&lt;b/);
   assert.match(message, /done &amp; &lt;safe&gt;/);
+});
+
+test("includes five-hour and weekly remaining quota in Telegram messages", () => {
+  const message = buildTelegramMessage({
+    host: "Codex",
+    event: "Stop",
+    rateLimits: {
+      fiveHour: { usedPercent: 12.5, resetsAt: 1786356000 },
+      weekly: { usedPercent: 91, resetsAt: 1786788000 },
+    },
+    timestamp: "2026-08-10T00:00:00.000Z",
+  });
+
+  assert.match(message, /<b>5h remaining:<\/b> <code>87\.5%<\/code>/);
+  assert.match(message, /<b>weekly remaining:<\/b> <code>9%<\/code>/);
+  assert.match(message, /resets <code>2026-08-10T10:00:00\.000Z<\/code>/);
+  assert.match(message, /resets <code>2026-08-15T10:00:00\.000Z<\/code>/);
+});
+
+test("extracts the latest Codex five-hour and weekly rate-limit snapshot", () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "agent-guard-codex-limits-"));
+  const transcriptPath = path.join(tempDir, "rollout.jsonl");
+  try {
+    const oldSnapshot = {
+      type: "event_msg",
+      payload: {
+        type: "token_count",
+        rate_limits: {
+          limit_id: "codex",
+          primary: { used_percent: 80, window_minutes: 300, resets_at: 1000 },
+          secondary: { used_percent: 90, window_minutes: 10080, resets_at: 2000 },
+        },
+      },
+    };
+    const newSnapshot = {
+      type: "event_msg",
+      payload: {
+        type: "token_count",
+        rate_limits: {
+          limit_id: "codex",
+          primary: { used_percent: 25, window_minutes: 300, resets_at: 3000 },
+          secondary: { used_percent: 40, window_minutes: 10080, resets_at: 4000 },
+        },
+      },
+    };
+    const unrelatedSnapshot = {
+      type: "event_msg",
+      payload: { type: "token_count", rate_limits: { limit_id: "premium" } },
+    };
+    fs.writeFileSync(
+      transcriptPath,
+      [oldSnapshot, { type: "response_item" }, newSnapshot, unrelatedSnapshot]
+        .map((record) => JSON.stringify(record))
+        .join("\n"),
+    );
+
+    assert.deepEqual(extractCodexRateLimits(transcriptPath), {
+      fiveHour: { usedPercent: 25, resetsAt: 3000 },
+      weekly: { usedPercent: 40, resetsAt: 4000 },
+    });
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("normalizes Claude Code status-line rate limits", () => {
+  const limits = normalizeClaudeRateLimits({
+    rate_limits: {
+      five_hour: { used_percentage: 23.5, resets_at: 5000 },
+      seven_day: { used_percentage: 41.2, resets_at: 6000 },
+    },
+  });
+
+  assert.deepEqual(limits, {
+    fiveHour: { usedPercent: 23.5, resetsAt: 5000 },
+    weekly: { usedPercent: 41.2, resetsAt: 6000 },
+  });
+  assert.equal(buildRateLimitStatusLine(limits), "5h remaining: 76.5% | weekly remaining: 58.8%");
+});
+
+test("caches Claude Code rate limits separately for each session", () => {
+  const cacheRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agent-guard-claude-limits-"));
+  try {
+    cacheClaudeRateLimits(
+      {
+        session_id: "session-a",
+        rate_limits: {
+          five_hour: { used_percentage: 10, resets_at: 7000 },
+          seven_day: { used_percentage: 20, resets_at: 8000 },
+        },
+      },
+      { cacheRoot },
+    );
+    cacheClaudeRateLimits(
+      {
+        session_id: "session-b",
+        rate_limits: {
+          five_hour: { used_percentage: 30, resets_at: 9000 },
+          seven_day: { used_percentage: 40, resets_at: 10000 },
+        },
+      },
+      { cacheRoot },
+    );
+
+    assert.deepEqual(readClaudeRateLimits("session-a", { cacheRoot }), {
+      fiveHour: { usedPercent: 10, resetsAt: 7000 },
+      weekly: { usedPercent: 20, resetsAt: 8000 },
+    });
+    assert.deepEqual(readClaudeRateLimits("session-b", { cacheRoot }), {
+      fiveHour: { usedPercent: 30, resetsAt: 9000 },
+      weekly: { usedPercent: 40, resetsAt: 10000 },
+    });
+  } finally {
+    fs.rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test("resolves Claude Code notification quota from its session cache", () => {
+  const cacheRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agent-guard-notification-limits-"));
+  try {
+    cacheClaudeRateLimits(
+      {
+        session_id: "notification-session",
+        rate_limits: {
+          five_hour: { used_percentage: 35, resets_at: 11000 },
+          seven_day: { used_percentage: 45, resets_at: 12000 },
+        },
+      },
+      { cacheRoot },
+    );
+
+    assert.deepEqual(
+      resolveNotificationRateLimits(
+        { host: "Claude Code", sessionId: "notification-session" },
+        { cacheRoot },
+      ),
+      {
+        fiveHour: { usedPercent: 35, resetsAt: 11000 },
+        weekly: { usedPercent: 45, resetsAt: 12000 },
+      },
+    );
+  } finally {
+    fs.rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test("waits for Claude Code's debounced status-line refresh before reading quota", async () => {
+  const cacheRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agent-guard-refreshed-limits-"));
+  let waited;
+  try {
+    const limits = await resolveNotificationRateLimitsAfterRefresh(
+      { host: "Claude Code", sessionId: "refreshed-session" },
+      {
+        cacheRoot,
+        waitImpl: async (milliseconds) => {
+          waited = milliseconds;
+          cacheClaudeRateLimits(
+            {
+              session_id: "refreshed-session",
+              rate_limits: {
+                five_hour: { used_percentage: 50, resets_at: 13000 },
+                seven_day: { used_percentage: 60, resets_at: 14000 },
+              },
+            },
+            { cacheRoot },
+          );
+        },
+      },
+    );
+
+    assert.equal(waited, 500);
+    assert.deepEqual(limits, {
+      fiveHour: { usedPercent: 50, resetsAt: 13000 },
+      weekly: { usedPercent: 60, resetsAt: 14000 },
+    });
+  } finally {
+    fs.rmSync(cacheRoot, { recursive: true, force: true });
+  }
 });
 
 test("detects Codex when Claude compatibility variables are also present", () => {

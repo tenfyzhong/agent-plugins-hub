@@ -47,6 +47,7 @@ function handleStop(payload) {
     event: payload.hook_event_name || "Stop",
     model: payload.model,
     sessionId: payload.session_id,
+    transcriptPath: payload.transcript_path,
     cwd: payload.cwd || process.cwd(),
     lastMessage: payload.last_assistant_message?.slice(0, 3000),
   });

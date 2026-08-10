@@ -7,6 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const pluginRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const hookPath = path.join(pluginRoot, "hooks", "agent-guard.mjs");
+const claudeStatusLinePath = path.join(pluginRoot, "hooks", "claude-statusline.mjs");
 const ompExtensionPath = path.join(pluginRoot, "extensions", "agent-guard-omp.ts");
 const extensionPath = path.join(pluginRoot, "extensions", "agent-guard.ts");
 
@@ -80,6 +81,56 @@ test("stop hook skips Telegram notifications for non-interactive sessions", () =
 
   assert.equal(result.status, 0, result.stderr);
   assert.equal(result.stderr, "");
+});
+
+test("Claude status-line adapter caches quota and displays remaining percentages", () => {
+  const cacheHome = fs.mkdtempSync(path.join(process.env.TMPDIR || "/tmp", "agent-guard-cache-"));
+  try {
+    const result = spawnSync(process.execPath, [claudeStatusLinePath], {
+      encoding: "utf8",
+      input: JSON.stringify({
+        session_id: "claude-session-1",
+        rate_limits: {
+          five_hour: { used_percentage: 20, resets_at: 1786356000 },
+          seven_day: { used_percentage: 70, resets_at: 1786788000 },
+        },
+      }),
+      env: { ...process.env, XDG_CACHE_HOME: cacheHome },
+    });
+
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout.trim(), "5h remaining: 80% | weekly remaining: 30%");
+    const cachePath = path.join(
+      cacheHome,
+      "agent-guard",
+      "claude-rate-limits",
+      `${Buffer.from("claude-session-1").toString("base64url")}.json`,
+    );
+    assert.deepEqual(JSON.parse(fs.readFileSync(cachePath, "utf8")), {
+      fiveHour: { usedPercent: 20, resetsAt: 1786356000 },
+      weekly: { usedPercent: 70, resetsAt: 1786788000 },
+    });
+
+    const proxied = spawnSync(process.execPath, [claudeStatusLinePath], {
+      encoding: "utf8",
+      input: JSON.stringify({
+        session_id: "claude-session-1",
+        rate_limits: {
+          five_hour: { used_percentage: 21, resets_at: 1786356000 },
+          seven_day: { used_percentage: 71, resets_at: 1786788000 },
+        },
+      }),
+      env: {
+        ...process.env,
+        XDG_CACHE_HOME: cacheHome,
+        AGENT_GUARD_STATUSLINE_COMMAND: "printf 'existing status\\n'",
+      },
+    });
+    assert.equal(proxied.status, 0, proxied.stderr);
+    assert.equal(proxied.stdout, "existing status\n");
+  } finally {
+    fs.rmSync(cacheHome, { recursive: true, force: true });
+  }
 });
 
 test("pi extension blocks dangerous bash and allows safe bash", async () => {
