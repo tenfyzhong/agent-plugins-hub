@@ -1,0 +1,521 @@
+{
+  "schema_version": 1,
+  "agents": [
+    {
+      "name": "ed-requirements",
+      "description": "Analyze a software request and produce scope, acceptance criteria, constraints, assumptions, and blocking questions.",
+      "prompt": "Analyze the request without editing files. Identify the user-visible outcome, in-scope and out-of-scope behavior, acceptance criteria, constraints, compatibility requirements, edge cases, and unresolved decisions. Inspect repository instructions and lightweight context when useful. Ask only questions whose answers materially change the implementation; otherwise state reasonable assumptions. Return a concise requirements brief for explorers and the planner.",
+      "platforms": {
+        "codex": {
+          "model": "gpt-5.6-luna",
+          "reasoning": "low",
+          "sandbox_mode": "read-only"
+        },
+        "claude": {
+          "model": "haiku",
+          "effort": "low",
+          "tools": [
+            "Read",
+            "Grep",
+            "Glob",
+            "Bash"
+          ]
+        },
+        "pi": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking": "low",
+          "tools": [
+            "read",
+            "grep",
+            "find",
+            "ls",
+            "bash"
+          ],
+          "system_prompt_mode": "append",
+          "inherit_project_context": true,
+          "inherit_skills": true
+        },
+        "omp": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking_level": "high",
+          "tools": [
+            "read",
+            "grep",
+            "glob",
+            "bash"
+          ]
+        }
+      }
+    },
+    {
+      "name": "ed-backend-explorer",
+      "description": "Read-only backend explorer that maps server entry points, data flow, persistence, tests, and implementation risks.",
+      "prompt": "Explore only; do not edit. Trace the relevant backend execution path from entry point through domain logic, storage, events, and external services. Identify exact files and symbols, existing tests and conventions, shared contracts, migrations or generated artifacts, likely write set, risks, and open questions. Prefer targeted searches and concrete citations. Return a concise exploration brief for the planner and implementer.",
+      "platforms": {
+        "codex": {
+          "model": "gpt-5.6-luna",
+          "reasoning": "low",
+          "sandbox_mode": "read-only"
+        },
+        "claude": {
+          "model": "haiku",
+          "effort": "low",
+          "tools": [
+            "Read",
+            "Grep",
+            "Glob",
+            "Bash"
+          ]
+        },
+        "pi": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking": "low",
+          "tools": [
+            "read",
+            "grep",
+            "find",
+            "ls",
+            "bash"
+          ],
+          "system_prompt_mode": "append",
+          "inherit_project_context": true,
+          "inherit_skills": true
+        },
+        "omp": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking_level": "high",
+          "tools": [
+            "read",
+            "grep",
+            "glob",
+            "bash"
+          ],
+          "read_summarize": false
+        }
+      }
+    },
+    {
+      "name": "ed-frontend-explorer",
+      "description": "Read-only frontend explorer that maps UI entry points, state, API boundaries, tests, and implementation risks.",
+      "prompt": "Explore only; do not edit. Trace the relevant user flow through routes, components, state, API clients, styling, accessibility, and tests. Identify exact files and symbols, reusable patterns, shared contracts, likely write set, visual or browser validation needs, risks, and open questions. Prefer targeted searches and concrete citations. Return a concise exploration brief for the planner and implementer.",
+      "platforms": {
+        "codex": {
+          "model": "gpt-5.6-luna",
+          "reasoning": "low",
+          "sandbox_mode": "read-only"
+        },
+        "claude": {
+          "model": "haiku",
+          "effort": "low",
+          "tools": [
+            "Read",
+            "Grep",
+            "Glob",
+            "Bash"
+          ]
+        },
+        "pi": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking": "low",
+          "tools": [
+            "read",
+            "grep",
+            "find",
+            "ls",
+            "bash"
+          ],
+          "system_prompt_mode": "append",
+          "inherit_project_context": true,
+          "inherit_skills": true
+        },
+        "omp": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking_level": "high",
+          "tools": [
+            "read",
+            "grep",
+            "glob",
+            "bash"
+          ],
+          "read_summarize": false
+        }
+      }
+    },
+    {
+      "name": "ed-docs",
+      "description": "Read-only documentation and dependency researcher for APIs, versions, compatibility, and external constraints.",
+      "prompt": "Research only; do not edit. Inspect dependency manifests and lockfiles, then verify version-sensitive behavior with primary documentation and authoritative sources. Record installed and relevant versions, supported APIs, deprecations, migration constraints, security or licensing concerns, and exact links. Separate verified facts from inference. Return only findings that affect planning, implementation, or testing.",
+      "platforms": {
+        "codex": {
+          "model": "gpt-5.6-luna",
+          "reasoning": "low",
+          "sandbox_mode": "read-only"
+        },
+        "claude": {
+          "model": "haiku",
+          "effort": "low",
+          "tools": [
+            "Read",
+            "Grep",
+            "Glob",
+            "Bash",
+            "WebFetch",
+            "WebSearch"
+          ]
+        },
+        "pi": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking": "low",
+          "tools": [
+            "read",
+            "grep",
+            "find",
+            "ls",
+            "bash",
+            "web_search",
+            "fetch_content",
+            "get_search_content"
+          ],
+          "system_prompt_mode": "append",
+          "inherit_project_context": true,
+          "inherit_skills": true
+        },
+        "omp": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking_level": "high",
+          "tools": [
+            "read",
+            "grep",
+            "glob",
+            "bash",
+            "web_search"
+          ]
+        }
+      }
+    },
+    {
+      "name": "ed-planner",
+      "description": "Create an implementation DAG with shared contracts, file ownership, dependencies, worktree boundaries, and validation steps.",
+      "prompt": "Plan only; do not edit. Synthesize the requirements and exploration evidence into the smallest complete implementation plan. Identify shared contracts that must land before parallel work. For every unit provide a stable id, bounded goal, dependencies, exact write set, forbidden paths, tests, parallel-safety decision, and risk. Reject overlapping parallel write sets, including generated files, lockfiles, schemas, migrations, shared types, and global configuration. Provide integration order and final checks. State assumptions and unresolved blockers explicitly.",
+      "platforms": {
+        "codex": {
+          "model": "gpt-5.6-sol",
+          "reasoning": "xhigh",
+          "sandbox_mode": "read-only"
+        },
+        "claude": {
+          "model": "opus",
+          "effort": "high",
+          "tools": [
+            "Read",
+            "Grep",
+            "Glob",
+            "Bash"
+          ]
+        },
+        "pi": {
+          "model": "deepseek/deepseek-v4-pro",
+          "thinking": "high",
+          "tools": [
+            "read",
+            "grep",
+            "find",
+            "ls",
+            "bash"
+          ],
+          "system_prompt_mode": "append",
+          "inherit_project_context": true,
+          "inherit_skills": true
+        },
+        "omp": {
+          "model": "deepseek/deepseek-v4-pro",
+          "thinking_level": "max",
+          "tools": [
+            "read",
+            "grep",
+            "glob",
+            "bash"
+          ]
+        }
+      }
+    },
+    {
+      "name": "ed-implementer",
+      "description": "Implement one bounded plan unit in its assigned worktree with TDD and focused validation.",
+      "prompt": "Implement exactly one assigned plan unit. Work only inside the supplied worktree and write set; do not touch forbidden or unrelated files. Follow repository instructions. Use TDD for behavior changes: add a reusable test, observe the expected failure, make the smallest implementation, and verify the pass. Run focused checks, inspect the diff, and commit completed work with `git commit -s` when requested. Return changed files, tests and results, commit id, assumptions, and any integration risks.",
+      "platforms": {
+        "codex": {
+          "model": "gpt-5.6-terra",
+          "reasoning": "medium",
+          "sandbox_mode": "workspace-write"
+        },
+        "claude": {
+          "model": "sonnet",
+          "effort": "medium",
+          "tools": [
+            "Read",
+            "Grep",
+            "Glob",
+            "Bash",
+            "Edit",
+            "Write"
+          ]
+        },
+        "pi": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking": "medium",
+          "tools": [
+            "read",
+            "grep",
+            "find",
+            "ls",
+            "bash",
+            "edit",
+            "write"
+          ],
+          "system_prompt_mode": "append",
+          "inherit_project_context": true,
+          "inherit_skills": true,
+          "acceptance_role": "writer"
+        },
+        "omp": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking_level": "high",
+          "tools": [
+            "read",
+            "grep",
+            "glob",
+            "bash",
+            "edit",
+            "write"
+          ]
+        }
+      }
+    },
+    {
+      "name": "ed-debugger",
+      "description": "Diagnose reproducible failures and apply the smallest evidence-backed repair.",
+      "prompt": "Diagnose before editing. Reproduce the failure or establish the root cause from concrete logs, traces, tests, and code paths. Distinguish causes from symptoms and state the evidence. Add or refine a regression test when behavior changes. Apply the smallest repair within the assigned write set, run focused and relevant regression checks, and inspect the final diff. Do not hide failures by weakening tests. Return root cause, evidence, changed files, validation, and residual risk.",
+      "platforms": {
+        "codex": {
+          "model": "gpt-5.6-terra",
+          "reasoning": "high",
+          "sandbox_mode": "workspace-write"
+        },
+        "claude": {
+          "model": "sonnet",
+          "effort": "high",
+          "tools": [
+            "Read",
+            "Grep",
+            "Glob",
+            "Bash",
+            "Edit",
+            "Write"
+          ]
+        },
+        "pi": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking": "high",
+          "tools": [
+            "read",
+            "grep",
+            "find",
+            "ls",
+            "bash",
+            "edit",
+            "write"
+          ],
+          "system_prompt_mode": "append",
+          "inherit_project_context": true,
+          "inherit_skills": true,
+          "acceptance_role": "writer"
+        },
+        "omp": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking_level": "high",
+          "tools": [
+            "read",
+            "grep",
+            "glob",
+            "bash",
+            "edit",
+            "write"
+          ]
+        }
+      }
+    },
+    {
+      "name": "ed-tester",
+      "description": "Run focused and regression checks against an integrated change and report reproducible evidence.",
+      "prompt": "Validate without editing product code. Derive checks from acceptance criteria and the actual diff. Run the narrow tests first, then the appropriate broader suite, build, lint, type checks, or browser validation. Record exact commands, exit status, and concise failure evidence. Distinguish product failures, flaky tests, and environment problems. Do not declare success for checks that were skipped or unavailable.",
+      "platforms": {
+        "codex": {
+          "model": "gpt-5.6-luna",
+          "reasoning": "low",
+          "sandbox_mode": "workspace-write"
+        },
+        "claude": {
+          "model": "haiku",
+          "effort": "low",
+          "tools": [
+            "Read",
+            "Grep",
+            "Glob",
+            "Bash"
+          ]
+        },
+        "pi": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking": "low",
+          "tools": [
+            "read",
+            "grep",
+            "find",
+            "ls",
+            "bash"
+          ],
+          "system_prompt_mode": "append",
+          "inherit_project_context": true,
+          "inherit_skills": true,
+          "acceptance_role": "read-only"
+        },
+        "omp": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking_level": "high",
+          "tools": [
+            "read",
+            "grep",
+            "glob",
+            "bash"
+          ]
+        }
+      }
+    },
+    {
+      "name": "ed-reviewer",
+      "description": "Independently review an integrated change for correctness, security, regressions, and missing tests.",
+      "prompt": "Review only; do not edit. Compare the integrated diff with the request, accepted requirements, and plan. Prioritize correctness, security, data integrity, compatibility, concurrency, error handling, regressions, and missing tests. Verify findings against concrete code paths and avoid style-only comments. Report findings first, ordered by severity, with files or symbols and reproduction guidance. If there are no findings, say so and list residual risks or validation gaps.",
+      "platforms": {
+        "codex": {
+          "model": "gpt-5.6-sol",
+          "reasoning": "high",
+          "sandbox_mode": "read-only"
+        },
+        "claude": {
+          "model": "opus",
+          "effort": "high",
+          "tools": [
+            "Read",
+            "Grep",
+            "Glob",
+            "Bash"
+          ]
+        },
+        "pi": {
+          "model": "deepseek/deepseek-v4-pro",
+          "thinking": "high",
+          "tools": [
+            "read",
+            "grep",
+            "find",
+            "ls",
+            "bash"
+          ],
+          "system_prompt_mode": "append",
+          "inherit_project_context": true,
+          "inherit_skills": true,
+          "acceptance_role": "read-only"
+        },
+        "omp": {
+          "model": "deepseek/deepseek-v4-pro",
+          "thinking_level": "max",
+          "tools": [
+            "read",
+            "grep",
+            "glob",
+            "bash"
+          ]
+        }
+      }
+    },
+    {
+      "name": "ed-main",
+      "description": "Main engineering-delivery coordinator for requirements, exploration, planning, implementation, testing, and review.",
+      "prompt": "Act as the main engineering-delivery coordinator. Keep requirements, decisions, integration, and final reporting in the main thread. Use the engineering-delivery skill when the host supports skills. Delegate bounded work to the `ed-*` agents, parallelize only independent work, and preserve unrelated user changes. Require evidence before declaring success.",
+      "platforms": {
+        "codex": {
+          "model": "gpt-5.6-terra",
+          "reasoning": "medium",
+          "sandbox_mode": "workspace-write"
+        },
+        "claude": {
+          "model": "sonnet",
+          "effort": "medium",
+          "tools": [
+            "Agent",
+            "Read",
+            "Grep",
+            "Glob",
+            "Bash",
+            "Edit",
+            "Write",
+            "Skill"
+          ],
+          "skills": [
+            "engineering-delivery"
+          ]
+        },
+        "pi": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking": "medium",
+          "tools": [
+            "read",
+            "grep",
+            "find",
+            "ls",
+            "bash",
+            "edit",
+            "write",
+            "subagent"
+          ],
+          "system_prompt_mode": "append",
+          "inherit_project_context": true,
+          "inherit_skills": true,
+          "skills": [
+            "engineering-delivery"
+          ],
+          "max_subagent_depth": 2
+        },
+        "omp": {
+          "model": "deepseek/deepseek-v4-flash",
+          "thinking_level": "high",
+          "tools": [
+            "read",
+            "grep",
+            "glob",
+            "bash",
+            "edit",
+            "write",
+            "task",
+            "hub"
+          ],
+          "spawns": [
+            "ed-requirements",
+            "ed-backend-explorer",
+            "ed-frontend-explorer",
+            "ed-docs",
+            "ed-planner",
+            "ed-implementer",
+            "ed-debugger",
+            "ed-tester",
+            "ed-reviewer"
+          ],
+          "autoload_skills": [
+            "engineering-delivery"
+          ]
+        }
+      }
+    }
+  ]
+}

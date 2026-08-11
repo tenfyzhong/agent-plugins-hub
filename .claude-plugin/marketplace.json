@@ -14,6 +14,10 @@
     {
       "name": "agent-guard",
       "source": "./plugins/agent-guard"
+    },
+    {
+      "name": "engineering-delivery",
+      "source": "./plugins/engineering-delivery"
     }
   ]
 }
