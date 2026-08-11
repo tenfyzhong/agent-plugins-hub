@@ -1,0 +1,12 @@
+{
+  "name": "engineering-delivery",
+  "version": "0.1.0+codex.20260811040913",
+  "private": true,
+  "description": "Cross-agent engineering delivery workflow and agent templates.",
+  "license": "MIT",
+  "pi": {
+    "skills": [
+      "./skills"
+    ]
+  }
+}

@@ -19,7 +19,8 @@
       "./plugins/agent-guard/extensions/agent-guard.ts"
     ],
     "skills": [
-      "./plugins/lark-cli-skills/skills"
+      "./plugins/lark-cli-skills/skills",
+      "./plugins/engineering-delivery/skills"
     ]
   }
 }
