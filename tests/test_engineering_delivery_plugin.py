@@ -142,6 +142,48 @@ class EngineeringDeliveryPluginLayoutTest(unittest.TestCase):
             readme,
         )
 
+    def test_skill_requires_brainstorming_confirmation_and_host_planning(self):
+        skill = (
+            PLUGIN_ROOT / "skills" / "engineering-delivery" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        definitions = json.loads(DEFINITIONS_FILE.read_text(encoding="utf-8"))
+        prompts = {agent["name"]: agent["prompt"] for agent in definitions["agents"]}
+
+        self.assertIn("## Brainstorming and decision gate", skill)
+        self.assertIn("do not begin implementation", skill)
+        self.assertIn("Require the user's explicit selection", skill)
+        self.assertIn("## Host plan integration", skill)
+        self.assertIn("Codex", skill)
+        self.assertIn("Claude Code", skill)
+        self.assertIn("Pi", skill)
+        self.assertIn("`--permission-mode plan`", skill)
+        self.assertIn("optional `plan-mode` extension", skill)
+        self.assertIn("## Design document gate", skill)
+        self.assertIn("`docs/<task-id>-design.md`", skill)
+        self.assertIn("before creating worktrees or making implementation edits", skill)
+        self.assertIn("brainstorm", prompts["ed-requirements"].lower())
+        self.assertIn("confirmation", prompts["ed-planner"].lower())
+        self.assertIn("docs/", prompts["ed-planner"])
+        self.assertIn("brainstorm", prompts["ed-main"].lower())
+        self.assertIn("plan mode", prompts["ed-main"].lower())
+        self.assertIn("docs/", prompts["ed-main"])
+
+    def test_single_unsplittable_unit_is_delegated_to_one_implementer(self):
+        skill = (
+            PLUGIN_ROOT / "skills" / "engineering-delivery" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        definitions = json.loads(DEFINITIONS_FILE.read_text(encoding="utf-8"))
+        prompts = {agent["name"]: agent["prompt"] for agent in definitions["agents"]}
+
+        self.assertIn(
+            "cannot be safely split, create one implementation unit", skill
+        )
+        self.assertIn(
+            "assign it to exactly one `ed-implementer`", skill
+        )
+        self.assertIn("one `ed-implementer`", prompts["ed-planner"])
+        self.assertIn("exactly one `ed-implementer`", prompts["ed-main"])
+
 
 class EngineeringDeliveryAgentScriptsTest(unittest.TestCase):
     def run_script(self, script, agent_home, state_home, *arguments):

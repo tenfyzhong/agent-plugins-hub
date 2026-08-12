@@ -8,6 +8,26 @@ debugging, testing, and independent review. All shared role metadata and prompts
 only each host's native file format, and `scripts/generate-agents.py` renders the installable
 definitions. The repository therefore does not keep 40 expanded agent files in sync by hand.
 
+## Brainstorming and planning
+
+Before exploring or implementing, Engineering Delivery turns the request into a short brainstorm:
+outcome, alternatives, trade-offs, assumptions, risks, and non-goals. It asks for confirmation
+only when a decision would materially affect scope, architecture, contracts, migrations,
+dependencies, compatibility, security, cost, or an irreversible action. In that case it presents
+numbered options with their impact and a recommendation, then waits for the user's selection.
+
+After confirmation, the shared workflow enters the host's planning experience. Codex uses Plan
+mode when available and otherwise uses its read-only agent sandbox; Claude Code can be launched
+with `--permission-mode plan`; Pi can use its optional `plan-mode` extension. These integrations
+are optional enhancements: the plugin always preserves a portable, read-only planning and user
+decision gate for Codex, Claude Code, Pi, and Oh My Pi.
+
+When the design is complete and approved, the coordinator writes it to
+`docs/<task-id>-design.md` in the target repository before creating worktrees or changing
+implementation files. The document records the confirmed requirements, decisions and
+alternatives, architecture, implementation plan, test strategy, assumptions, risks, and rollout
+notes. It is updated whenever the design changes materially.
+
 ## Install agent definitions
 
 Install all four agent sets directly from GitHub with one command:
