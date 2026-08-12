@@ -28,6 +28,114 @@ implementation files. The document records the confirmed requirements, decisions
 alternatives, architecture, implementation plan, test strategy, assumptions, risks, and rollout
 notes. It is updated whenever the design changes materially.
 
+## Workflow in practice
+
+The coordinator owns the request, decisions, and integration. Specialist agents receive a
+bounded scope and return concise evidence; they do not independently expand the work. The normal
+path is:
+
+```text
++-------------------+
+| User request      |
++---------+---------+
+          |
+          v
++-------------------+     material decision      +-------------------+
+| Inspect repo, git | -------------------------> | Ask user to choose |
+| rules, and state  |                            +---------+---------+
++---------+---------+                                      |
+          | no blocking decision                            v
+          v                                      +-------------------+
++-------------------+                            | Record selection  |
+| Requirements and  | <--------------------------+-------------------+
+| brainstorm        |
++---------+---------+
+          |
+          v
++-------------------+
+| Read-only         |
+| exploration       |
+| backend | frontend|
+| docs (as needed)  |
++---------+---------+
+          |
+          v
++-------------------+
+| Planner produces  |
+| dependency DAG    |
++---------+---------+
+          | new material decision
+          +-------------------------------------> Ask user to choose
+          |
+          v
++-------------------+
+| Write and verify  |
+| docs/<task-id>-   |
+| design.md         |
++---------+---------+
+          |
+          v
++-------------------+
+| Implement units   |
+| and unit tests    |
+| (parallel only    |
+| for disjoint work)|
++---------+---------+
+          |
+          v
++-------------------+
+| Integrate in DAG  |
+| dependency order  |
++---------+---------+
+          |
+          v
++-------------------+     failure                +-------------------+
+| Test and review   | -------------------------> | Debug from        |
+| in parallel       |                            | reproduced proof  |
++---------+---------+                            +---------+---------+
+          | pass                                             |
+          v                                                  |
++-------------------+ <--------------------------------------+
+| Deliver summary   |       rerun affected checks and review
++-------------------+
+```
+
+1. **Establish the brief.** Inspect repository instructions and the current Git state, preserving
+   unrelated changes. `ed-requirements` turns the request into outcomes, acceptance criteria,
+   constraints, assumptions, risks, and non-goals. The coordinator asks the user only about
+   decisions that would materially change the result; ordinary uncertainties become documented
+   assumptions.
+2. **Explore before editing.** Use the host's read-only planning mode when available. Run
+   `ed-backend-explorer`, `ed-frontend-explorer`, and `ed-docs` concurrently only for applicable
+   areas. Their reports identify relevant files, contracts, existing tests, dependencies, risks,
+   and validation needs. Omitted lanes are recorded with a reason.
+3. **Plan ownership and dependencies.** `ed-planner` converts the confirmed brief and evidence
+   into a DAG. Each unit names its goal, dependencies, exact write set, forbidden paths, tests,
+   parallel-safety decision, and risk. Units that could touch the same contract, generated file,
+   lockfile, migration, schema, shared type, or global configuration are sequenced instead of
+   parallelized.
+4. **Make the approved design durable.** Before implementation, write
+   `docs/<task-id>-design.md` with the accepted decisions, alternatives, architecture, DAG,
+   affected files, test strategy, assumptions, risks, and rollout or rollback notes. A material
+   change returns the workflow to the decision gate and updates this document.
+5. **Implement with isolated ownership.** An `ed-implementer` owns one bounded unit and its
+   tests. Independent write units may use worktrees under `.git/wtm/<task-id>/` and branches named
+   `workflow/<task-id>/<unit-id>`; tightly coupled work remains one unit. Behavior changes follow
+   TDD: add a reusable failing test, verify the failure, make the smallest change, then verify the
+   pass.
+6. **Integrate and independently verify.** Integrate completed units in DAG order. Then run
+   `ed-tester` and `ed-reviewer` in parallel against the integrated tree. Their findings must cite
+   reproducible evidence and concrete locations.
+7. **Repair from evidence and close the loop.** `ed-debugger` changes code only after reproducing
+   a failure or establishing its root cause. Rerun the affected tests and review after each repair;
+   after three unsuccessful repair rounds, report the blocker rather than continuing blindly. The
+   final summary states delivered behavior, tests, review outcome, commits, worktrees, assumptions,
+   and residual risks.
+
+The workflow uses worktrees only for parallel writing. A clean current checkout is the integration
+worktree; otherwise it creates `.git/wtm/<task-id>/integration`, leaves the user's checkout
+untouched, and integrates completed signed-off commits in dependency order.
+
 ## Install agent definitions
 
 Install all four agent sets directly from GitHub with one command:
