@@ -37,7 +37,7 @@
         },
         "omp": {
           "model": "deepseek/deepseek-v4-flash",
-          "thinking_level": "high",
+          "thinking_level": "low",
           "tools": [
             "read",
             "grep",
@@ -83,7 +83,7 @@
         },
         "omp": {
           "model": "deepseek/deepseek-v4-flash",
-          "thinking_level": "high",
+          "thinking_level": "low",
           "tools": [
             "read",
             "grep",
@@ -130,7 +130,7 @@
         },
         "omp": {
           "model": "deepseek/deepseek-v4-flash",
-          "thinking_level": "high",
+          "thinking_level": "low",
           "tools": [
             "read",
             "grep",
@@ -182,7 +182,7 @@
         },
         "omp": {
           "model": "deepseek/deepseek-v4-flash",
-          "thinking_level": "high",
+          "thinking_level": "low",
           "tools": [
             "read",
             "grep",
@@ -215,7 +215,7 @@
         },
         "pi": {
           "model": "deepseek/deepseek-v4-pro",
-          "thinking": "high",
+          "thinking": "max",
           "tools": [
             "read",
             "grep",
@@ -280,7 +280,7 @@
         },
         "omp": {
           "model": "deepseek/deepseek-v4-flash",
-          "thinking_level": "high",
+          "thinking_level": "medium",
           "tools": [
             "read",
             "grep",
@@ -382,7 +382,7 @@
         },
         "omp": {
           "model": "deepseek/deepseek-v4-flash",
-          "thinking_level": "high",
+          "thinking_level": "low",
           "tools": [
             "read",
             "grep",
@@ -429,7 +429,7 @@
         },
         "omp": {
           "model": "deepseek/deepseek-v4-pro",
-          "thinking_level": "max",
+          "thinking_level": "high",
           "tools": [
             "read",
             "grep",
@@ -489,7 +489,7 @@
         },
         "omp": {
           "model": "deepseek/deepseek-v4-flash",
-          "thinking_level": "high",
+          "thinking_level": "medium",
           "tools": [
             "read",
             "grep",
