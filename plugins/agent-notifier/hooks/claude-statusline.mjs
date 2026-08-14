@@ -5,7 +5,7 @@ import { spawnSync } from "node:child_process";
 import {
   buildRateLimitStatusLine,
   cacheClaudeRateLimits,
-} from "../lib/guard.mjs";
+} from "../lib/notify.mjs";
 
 function readStdin() {
   return new Promise((resolve) => {
@@ -22,8 +22,8 @@ async function main() {
   const body = await readStdin();
   if (!body) return;
   const limits = cacheClaudeRateLimits(JSON.parse(body));
-  if (process.env.AGENT_GUARD_STATUSLINE_COMMAND) {
-    const result = spawnSync(process.env.AGENT_GUARD_STATUSLINE_COMMAND, {
+  if (process.env.AGENT_NOTIFIER_STATUSLINE_COMMAND) {
+    const result = spawnSync(process.env.AGENT_NOTIFIER_STATUSLINE_COMMAND, {
       encoding: "utf8",
       env: process.env,
       input: body,

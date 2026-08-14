@@ -1,0 +1,16 @@
+{
+  "description": "Send completion notifications to a configured webhook or Telegram.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "AGENT_NOTIFIER_ROOT=\"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; NODE_USE_ENV_PROXY=1 node \"$AGENT_NOTIFIER_ROOT/hooks/agent-notifier.mjs\"",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}

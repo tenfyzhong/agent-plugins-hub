@@ -12,7 +12,8 @@ native package metadata alongside shared Agent Skills.
 ├── .claude-plugin/marketplace.json     # Claude Code marketplace catalog
 ├── .github/workflows/                  # Marketplace automation
 ├── plugins/
-│   ├── agent-guard/                      # Cross-agent safety hooks
+│   ├── agent-guard/                      # Cross-agent destructive-command guard
+│   ├── agent-notifier/                   # Webhook and Telegram completion notifier
 │   ├── agent-usage-exporter/              # Best-effort OTLP usage metrics
 │   ├── engineering-delivery/             # Delivery skill and editable agent templates
 │   └── lark-cli-skills/
@@ -50,6 +51,7 @@ Then install plugins through the Codex plugin browser or by name:
 ```bash
 codex plugin add lark-cli-skills@tenfyzhong-agent-plugins-hub
 codex plugin add agent-guard@tenfyzhong-agent-plugins-hub
+codex plugin add agent-notifier@tenfyzhong-agent-plugins-hub
 codex plugin add engineering-delivery@tenfyzhong-agent-plugins-hub
 codex plugin add agent-usage-exporter@tenfyzhong-agent-plugins-hub
 ```
@@ -73,6 +75,7 @@ Then install the plugin:
 ```bash
 claude plugin install lark-cli-skills@tenfyzhong-agent-plugins-hub
 claude plugin install agent-guard@tenfyzhong-agent-plugins-hub
+claude plugin install agent-notifier@tenfyzhong-agent-plugins-hub
 claude plugin install engineering-delivery@tenfyzhong-agent-plugins-hub
 claude plugin install agent-usage-exporter@tenfyzhong-agent-plugins-hub
 ```
@@ -104,6 +107,7 @@ Add this repository as an OMP marketplace and install Agent Guard as a plugin:
 ```bash
 omp plugin marketplace add tenfyzhong/agent-plugins-hub
 omp plugin install agent-guard@tenfyzhong-agent-plugins-hub
+omp plugin install agent-notifier@tenfyzhong-agent-plugins-hub
 omp plugin install engineering-delivery@tenfyzhong-agent-plugins-hub
 omp plugin install agent-usage-exporter@tenfyzhong-agent-plugins-hub
 ```
@@ -132,10 +136,19 @@ per-host installation, customization, and safe uninstallation details.
 ## Agent Guard
 
 The `agent-guard` plugin blocks known destructive shell commands before they
-run and can send a Telegram notification when an interactive agent run finishes. It uses
-native hooks for Codex, Claude Code, and Oh My Pi, plus a Pi extension. See
+run. It uses native hooks for Codex, Claude Code, and Oh My Pi, plus a Pi
+extension. See
 [`plugins/agent-guard/README.md`](plugins/agent-guard/README.md)
-for its blocked-command policy and credential setup.
+for its blocked-command policy.
+
+## Agent Notifier
+
+The `agent-notifier` plugin posts a completion notification after an
+interactive agent run finishes, to either a user-configured webhook or a
+Telegram chat. It uses native hooks for Codex, Claude Code, and Oh My Pi, plus
+a Pi extension. See
+[`plugins/agent-notifier/README.md`](plugins/agent-notifier/README.md)
+for webhook and Telegram configuration.
 
 ## Agent Usage Exporter
 

@@ -16,6 +16,10 @@
       "source": "./plugins/agent-guard"
     },
     {
+      "name": "agent-notifier",
+      "source": "./plugins/agent-notifier"
+    },
+    {
       "name": "engineering-delivery",
       "source": "./plugins/engineering-delivery"
     },

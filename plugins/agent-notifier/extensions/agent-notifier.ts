@@ -1,0 +1,73 @@
+import {
+  launchNotification,
+  shouldNotifyExtensionContext,
+} from "../lib/notify.mjs";
+
+type AgentMessageLike = {
+  role?: string;
+  content?: string | Array<{ type?: string; text?: string }>;
+};
+
+type ExtensionAPI = {
+  on(name: string, handler: (event: any, context: any) => Promise<unknown>): void;
+};
+
+function hostName(): string {
+  if (process.env.AGENT_NOTIFIER_HOST) return process.env.AGENT_NOTIFIER_HOST;
+  return process.argv.some((arg) => /(^|\/)omp$/.test(arg)) ? "oh-my-pi" : "pi";
+}
+
+function assistantText(messages: AgentMessageLike[]): string | undefined {
+  const assistant = messages.findLast((message) => message.role === "assistant");
+  if (!assistant) return undefined;
+  if (typeof assistant.content === "string") return assistant.content.slice(0, 3000);
+  if (!Array.isArray(assistant.content)) return undefined;
+  const text = assistant.content
+    .filter((part) => part.type === "text")
+    .map((part) => part.text || "")
+    .join("\n");
+  return text ? text.slice(0, 3000) : undefined;
+}
+
+export function registerAgentNotifier(pi: ExtensionAPI, host = hostName()) {
+  let lastMessage: string | undefined;
+
+  const notifyCompletion = (event: string, ctx: any, sessionId?: string) => {
+    if (!shouldNotifyExtensionContext(ctx)) return;
+    try {
+      launchNotification({
+        host,
+        event,
+        model: ctx.model?.id,
+        sessionId: sessionId || ctx.sessionManager.getSessionId(),
+        cwd: ctx.cwd,
+        lastMessage,
+      });
+    } catch (error) {
+      if (process.env.AGENT_NOTIFIER_DEBUG) {
+        ctx.ui.notify(`Agent Notifier worker failed to start: ${String(error)}`, "warning");
+      }
+    }
+  };
+
+  if (host === "oh-my-pi") {
+    pi.on("session_stop", async (event, ctx) => {
+      if (event.stop_hook_active === true) return;
+      lastMessage = event.last_assistant_message
+        ? assistantText([event.last_assistant_message])
+        : assistantText(event.messages);
+      notifyCompletion("session_stop", ctx, event.session_id);
+    });
+    return;
+  }
+
+  pi.on("agent_end", async (event) => {
+    lastMessage = assistantText(event.messages);
+  });
+
+  pi.on("agent_settled", async (_event, ctx) => {
+    notifyCompletion("agent_settled", ctx);
+  });
+}
+
+export default registerAgentNotifier;
