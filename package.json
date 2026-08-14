@@ -11,12 +11,14 @@
   "license": "MIT",
   "omp": {
     "extensions": [
-      "./plugins/agent-guard/extensions/agent-guard-omp.ts"
+      "./plugins/agent-guard/extensions/agent-guard-omp.ts",
+      "./plugins/agent-usage-exporter/extensions/agent-usage-exporter-omp.ts"
     ]
   },
   "pi": {
     "extensions": [
-      "./plugins/agent-guard/extensions/agent-guard.ts"
+      "./plugins/agent-guard/extensions/agent-guard.ts",
+      "./plugins/agent-usage-exporter/extensions/agent-usage-exporter.ts"
     ],
     "skills": [
       "./plugins/lark-cli-skills/skills",

@@ -1,0 +1,73 @@
+{
+  "gpt-5": {
+    "input": 1.25,
+    "cached_input": 0.125,
+    "output": 10
+  },
+  "gpt-5-mini": {
+    "input": 0.25,
+    "cached_input": 0.025,
+    "output": 2
+  },
+  "gpt-5.6": {
+    "input": 5,
+    "cached_input": 0.5,
+    "cache_write": 6.25,
+    "output": 30
+  },
+  "gpt-5.6-sol": {
+    "input": 5,
+    "cached_input": 0.5,
+    "cache_write": 6.25,
+    "output": 30
+  },
+  "gpt-5.6-terra": {
+    "input": 2.5,
+    "cached_input": 0.25,
+    "cache_write": 3.125,
+    "output": 15
+  },
+  "gpt-5.6-luna": {
+    "input": 1,
+    "cached_input": 0.1,
+    "cache_write": 1.25,
+    "output": 6
+  },
+  "deepseek-v4-flash": {
+    "peak_hours": [
+      { "start": 9, "end": 12 },
+      { "start": 14, "end": 18 }
+    ],
+    "off_peak": {
+      "input": 0.2226,
+      "cached_input": 0.0074,
+      "output": 0.6677
+    },
+    "peak": {
+      "input": 0.4451,
+      "cached_input": 0.0148,
+      "output": 1.3353
+    }
+  },
+  "deepseek-v4-pro": {
+    "peak_hours": [
+      { "start": 9, "end": 12 },
+      { "start": 14, "end": 18 }
+    ],
+    "off_peak": {
+      "input": 0.6677,
+      "cached_input": 0.0223,
+      "output": 2.003
+    },
+    "peak": {
+      "input": 1.3353,
+      "cached_input": 0.0445,
+      "output": 4.0059
+    }
+  },
+  "_aliases": {
+    "openrouter/deepseek/deepseek-v4-flash": "deepseek-v4-flash",
+    "deepseek/deepseek-v4-flash": "deepseek-v4-flash",
+    "deepseek/deepseek-v4-pro": "deepseek-v4-pro"
+  }
+}

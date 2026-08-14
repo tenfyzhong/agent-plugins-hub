@@ -1,0 +1,2 @@
+{"type":"assistant","message":{"id":"msg_bdrk_x2uipsy64l75x5hywmxvibnc7zxq7fxwnxaujpfhsjqnlye4j2xq","model":"claude-opus-5","usage":{"input_tokens":2,"cache_creation_input_tokens":36623,"cache_read_input_tokens":0,"output_tokens":13,"service_tier":"standard"}}}
+{"type":"assistant","message":{"content":"usage-looking text is not usage"}}

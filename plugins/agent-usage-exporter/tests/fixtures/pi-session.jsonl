@@ -1,0 +1,2 @@
+{"type":"model_change","id":"8125994e","parentId":null,"timestamp":"2026-07-14T07:58:00.617Z","provider":"deepseek","modelId":"deepseek-v4-pro"}
+{"type":"message","id":"2fc8a23b","message":{"role":"assistant","provider":"deepseek","model":"deepseek-v4-pro","usage":{"input":2331,"output":156,"cacheRead":3712,"cacheWrite":0,"totalTokens":6199}}}
