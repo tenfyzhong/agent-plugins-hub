@@ -660,42 +660,54 @@
   "templating": {
     "list": [
       {
-        "allValue": ".*",
         "current": {
           "selected": true,
           "text": [
             "codex",
-            "claude-code",
+            "oh-my-pi",
             "pi",
-            "oh-my-pi"
+            "claude-code"
           ],
           "value": [
             "codex",
-            "claude-code",
+            "oh-my-pi",
             "pi",
-            "oh-my-pi"
+            "claude-code"
           ]
         },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
-        },
-        "definition": "label_values(agent_usage_tokens, agent)",
         "hide": 0,
         "includeAll": true,
         "label": "Agents",
         "multi": true,
         "name": "agent",
-        "options": [],
-        "query": {
-          "query": "label_values(agent_usage_tokens, agent)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
+        "options": [
+          {
+            "selected": true,
+            "text": "codex",
+            "value": "codex"
+          },
+          {
+            "selected": true,
+            "text": "oh-my-pi",
+            "value": "oh-my-pi"
+          },
+          {
+            "selected": true,
+            "text": "pi",
+            "value": "pi"
+          },
+          {
+            "selected": true,
+            "text": "claude-code",
+            "value": "claude-code"
+          }
+        ],
+        "query": "codex,oh-my-pi,pi,claude-code",
+        "refresh": 0,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
+        "sort": 0,
+        "type": "custom"
       },
       {
         "current": {
