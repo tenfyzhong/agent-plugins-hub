@@ -18,6 +18,10 @@
     {
       "name": "engineering-delivery",
       "source": "./plugins/engineering-delivery"
+    },
+    {
+      "name": "agent-usage-exporter",
+      "source": "./plugins/agent-usage-exporter"
     }
   ]
 }

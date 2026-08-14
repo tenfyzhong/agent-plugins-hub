@@ -1,0 +1,14 @@
+{
+  "name": "agent-usage-exporter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Best-effort OTLP usage metrics for Codex, Claude Code, Pi, and Oh My Pi.",
+  "license": "MIT",
+  "omp": {
+    "extensions": ["./extensions/agent-usage-exporter-omp.ts"]
+  },
+  "pi": {
+    "extensions": ["./extensions/agent-usage-exporter.ts"]
+  }
+}

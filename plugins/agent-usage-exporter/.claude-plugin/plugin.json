@@ -1,0 +1,10 @@
+{
+  "name": "agent-usage-exporter",
+  "version": "0.1.0",
+  "description": "Export coding-agent token and estimated cost metrics to OTLP.",
+  "author": { "name": "tenfyzhong", "url": "https://github.com/tenfyzhong" },
+  "homepage": "https://github.com/tenfyzhong/agent-plugins-hub/tree/main/plugins/agent-usage-exporter",
+  "repository": "https://github.com/tenfyzhong/agent-plugins-hub",
+  "license": "MIT",
+  "keywords": ["metrics", "otlp", "grafana", "usage"]
+}

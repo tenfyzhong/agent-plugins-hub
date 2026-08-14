@@ -97,7 +97,7 @@ class MarketplaceLayoutTest(unittest.TestCase):
 
         repository_entry = "./plugins/agent-guard/extensions/agent-guard-omp.ts"
         plugin_entry = "./extensions/agent-guard-omp.ts"
-        self.assertEqual(repository_package["omp"]["extensions"], [repository_entry])
+        self.assertIn(repository_entry, repository_package["omp"]["extensions"])
         self.assertEqual(plugin_package["omp"]["extensions"], [plugin_entry])
         self.assertTrue(
             (REPOSITORY_ROOT / repository_entry.removeprefix("./")).is_file()
@@ -112,6 +112,39 @@ class MarketplaceLayoutTest(unittest.TestCase):
                 / "agent-guard.ts"
             ).exists()
         )
+
+    def test_agent_usage_exporter_is_registered_for_every_host(self):
+        marketplace = json.loads(MARKETPLACE_FILE.read_text(encoding="utf-8"))
+        claude_marketplace = json.loads(
+            CLAUDE_MARKETPLACE_FILE.read_text(encoding="utf-8")
+        )
+        package = json.loads(
+            (REPOSITORY_ROOT / "package.json").read_text(encoding="utf-8")
+        )
+        plugin_root = REPOSITORY_ROOT / "plugins" / "agent-usage-exporter"
+
+        self.assertIn(
+            "agent-usage-exporter", [item["name"] for item in marketplace["plugins"]]
+        )
+        self.assertIn(
+            "agent-usage-exporter",
+            [item["name"] for item in claude_marketplace["plugins"]],
+        )
+        self.assertIn(
+            "./plugins/agent-usage-exporter/extensions/agent-usage-exporter.ts",
+            package["pi"]["extensions"],
+        )
+        self.assertIn(
+            "./plugins/agent-usage-exporter/extensions/agent-usage-exporter-omp.ts",
+            package["omp"]["extensions"],
+        )
+        self.assertTrue((plugin_root / ".codex-plugin" / "plugin.json").is_file())
+        self.assertTrue((plugin_root / ".claude-plugin" / "plugin.json").is_file())
+        self.assertTrue((plugin_root / "hooks" / "hooks.json").is_file())
+        self.assertTrue((plugin_root / "README.md").is_file())
+        alloy_config = plugin_root / "alloy" / "config.alloy"
+        self.assertTrue(alloy_config.is_file())
+        self.assertIn("add_metric_suffixes = false", alloy_config.read_text())
 
 
 class ClaudeMarketplaceLayoutTest(unittest.TestCase):
