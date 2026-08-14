@@ -113,6 +113,24 @@ class MarketplaceLayoutTest(unittest.TestCase):
             ).exists()
         )
 
+    def test_agent_notifier_uses_native_omp_plugin_manifests(self):
+        repository_package = json.loads(
+            (REPOSITORY_ROOT / "package.json").read_text(encoding="utf-8")
+        )
+        plugin_package = json.loads(
+            (
+                REPOSITORY_ROOT / "plugins" / "agent-notifier" / "package.json"
+            ).read_text(encoding="utf-8")
+        )
+
+        repository_entry = "./plugins/agent-notifier/extensions/agent-notifier-omp.ts"
+        plugin_entry = "./extensions/agent-notifier-omp.ts"
+        self.assertIn(repository_entry, repository_package["omp"]["extensions"])
+        self.assertEqual(plugin_package["omp"]["extensions"], [plugin_entry])
+        self.assertTrue(
+            (REPOSITORY_ROOT / repository_entry.removeprefix("./")).is_file()
+        )
+
     def test_agent_usage_exporter_is_registered_for_every_host(self):
         marketplace = json.loads(MARKETPLACE_FILE.read_text(encoding="utf-8"))
         claude_marketplace = json.loads(

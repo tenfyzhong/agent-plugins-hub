@@ -1,0 +1,33 @@
+{
+  "name": "agent-notifier",
+  "version": "0.1.0+codex.20260810104504",
+  "description": "Notify a webhook or Telegram when interactive agent runs finish.",
+  "author": {
+    "name": "tenfyzhong",
+    "url": "https://github.com/tenfyzhong"
+  },
+  "homepage": "https://github.com/tenfyzhong/agent-plugins-hub/tree/main/plugins/agent-notifier",
+  "repository": "https://github.com/tenfyzhong/agent-plugins-hub",
+  "license": "MIT",
+  "keywords": [
+    "hooks",
+    "webhook",
+    "telegram",
+    "notifications"
+  ],
+  "interface": {
+    "displayName": "Agent Notifier",
+    "shortDescription": "Webhook and Telegram completion notifications.",
+    "longDescription": "Cross-agent lifecycle hooks that post a JSON payload to a configured webhook, or fall back to a Telegram message, after an interactive agent run settles.",
+    "developerName": "tenfyzhong",
+    "category": "Productivity",
+    "capabilities": [
+      "Webhook Notifications",
+      "Telegram Notifications",
+      "Lifecycle Hooks"
+    ],
+    "defaultPrompt": [
+      "Help me configure Agent Notifier webhooks."
+    ]
+  }
+}

@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 
-import {
-  detectAgentHost,
-  dangerousCommandReason,
-  isNonInteractiveHookSession,
-  launchTelegramNotification,
-} from "../lib/guard.mjs";
+import { dangerousCommandReason } from "../lib/guard.mjs";
 
 function readStdin() {
   return new Promise((resolve) => {
@@ -16,12 +11,6 @@ function readStdin() {
     });
     process.stdin.on("end", () => resolve(body));
   });
-}
-
-function shouldSkipStop(payload) {
-  if (payload.stop_hook_active === true) return true;
-  if (payload.cwd === `${process.env.HOME}/.codex/memories`) return true;
-  return typeof payload.cwd === "string" && payload.cwd.includes("/.slock/");
 }
 
 function handlePreToolUse(payload) {
@@ -40,19 +29,6 @@ function handlePreToolUse(payload) {
   );
 }
 
-function handleStop(payload) {
-  if (shouldSkipStop(payload) || isNonInteractiveHookSession(payload)) return;
-  launchTelegramNotification({
-    host: detectAgentHost(),
-    event: payload.hook_event_name || "Stop",
-    model: payload.model,
-    sessionId: payload.session_id,
-    transcriptPath: payload.transcript_path,
-    cwd: payload.cwd || process.cwd(),
-    lastMessage: payload.last_assistant_message?.slice(0, 3000),
-  });
-}
-
 async function main() {
   let payload;
   try {
@@ -63,8 +39,6 @@ async function main() {
 
   if (payload.hook_event_name === "PreToolUse") {
     handlePreToolUse(payload);
-  } else if (payload.hook_event_name === "Stop") {
-    handleStop(payload);
   }
 }
 
