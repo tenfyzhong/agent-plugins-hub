@@ -7,7 +7,7 @@
           {
             "type": "command",
             "command": "AGENT_USAGE_EXPORTER_ROOT=\"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; node \"$AGENT_USAGE_EXPORTER_ROOT/hooks/host-launcher.mjs\" codex",
-            "timeout": 10
+            "timeout": 3
           }
         ]
       }
@@ -18,7 +18,7 @@
           {
             "type": "command",
             "command": "AGENT_USAGE_EXPORTER_ROOT=\"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; node \"$AGENT_USAGE_EXPORTER_ROOT/hooks/host-launcher.mjs\" claude-code",
-            "timeout": 10
+            "timeout": 3
           }
         ]
       }
