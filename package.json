@@ -23,8 +23,7 @@
       "./plugins/agent-usage-exporter/extensions/agent-usage-exporter.ts"
     ],
     "skills": [
-      "./plugins/lark-cli-skills/skills",
-      "./plugins/engineering-delivery/skills"
+      "./plugins/lark-cli-skills/skills"
     ]
   }
 }
