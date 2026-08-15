@@ -1,4 +1,0 @@
-interface:
-  display_name: "Engineering Delivery"
-  short_description: "Coordinate parallel engineering delivery workflows"
-  default_prompt: "Use $engineering-delivery to analyze, plan, implement, test, and review this change."
