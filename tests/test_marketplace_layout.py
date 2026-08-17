@@ -85,7 +85,14 @@ class MarketplaceLayoutTest(unittest.TestCase):
                     (REPOSITORY_ROOT / extension.removeprefix("./")).is_file()
                 )
 
-    def test_agent_guard_uses_native_omp_plugin_manifests(self):
+    def test_repository_has_no_omp_extension_install_manifest(self):
+        repository_package = json.loads(
+            (REPOSITORY_ROOT / "package.json").read_text(encoding="utf-8")
+        )
+
+        self.assertNotIn("omp", repository_package)
+
+    def test_agent_guard_uses_native_omp_plugin_manifest(self):
         repository_package = json.loads(
             (REPOSITORY_ROOT / "package.json").read_text(encoding="utf-8")
         )
@@ -95,12 +102,17 @@ class MarketplaceLayoutTest(unittest.TestCase):
             ).read_text(encoding="utf-8")
         )
 
-        repository_entry = "./plugins/agent-guard/extensions/agent-guard-omp.ts"
         plugin_entry = "./extensions/agent-guard-omp.ts"
-        self.assertIn(repository_entry, repository_package["omp"]["extensions"])
+        self.assertNotIn("omp", repository_package)
         self.assertEqual(plugin_package["omp"]["extensions"], [plugin_entry])
         self.assertTrue(
-            (REPOSITORY_ROOT / repository_entry.removeprefix("./")).is_file()
+            (
+                REPOSITORY_ROOT
+                / "plugins"
+                / "agent-guard"
+                / "extensions"
+                / "agent-guard-omp.ts"
+            ).is_file()
         )
         self.assertFalse(
             (
@@ -113,7 +125,7 @@ class MarketplaceLayoutTest(unittest.TestCase):
             ).exists()
         )
 
-    def test_agent_notifier_uses_native_omp_plugin_manifests(self):
+    def test_agent_notifier_uses_native_omp_plugin_manifest(self):
         repository_package = json.loads(
             (REPOSITORY_ROOT / "package.json").read_text(encoding="utf-8")
         )
@@ -123,12 +135,17 @@ class MarketplaceLayoutTest(unittest.TestCase):
             ).read_text(encoding="utf-8")
         )
 
-        repository_entry = "./plugins/agent-notifier/extensions/agent-notifier-omp.ts"
         plugin_entry = "./extensions/agent-notifier-omp.ts"
-        self.assertIn(repository_entry, repository_package["omp"]["extensions"])
+        self.assertNotIn("omp", repository_package)
         self.assertEqual(plugin_package["omp"]["extensions"], [plugin_entry])
         self.assertTrue(
-            (REPOSITORY_ROOT / repository_entry.removeprefix("./")).is_file()
+            (
+                REPOSITORY_ROOT
+                / "plugins"
+                / "agent-notifier"
+                / "extensions"
+                / "agent-notifier-omp.ts"
+            ).is_file()
         )
 
     def test_agent_usage_exporter_is_registered_for_every_host(self):
@@ -136,8 +153,16 @@ class MarketplaceLayoutTest(unittest.TestCase):
         claude_marketplace = json.loads(
             CLAUDE_MARKETPLACE_FILE.read_text(encoding="utf-8")
         )
-        package = json.loads(
+        repository_package = json.loads(
             (REPOSITORY_ROOT / "package.json").read_text(encoding="utf-8")
+        )
+        plugin_package = json.loads(
+            (
+                REPOSITORY_ROOT
+                / "plugins"
+                / "agent-usage-exporter"
+                / "package.json"
+            ).read_text(encoding="utf-8")
         )
         plugin_root = REPOSITORY_ROOT / "plugins" / "agent-usage-exporter"
 
@@ -150,11 +175,21 @@ class MarketplaceLayoutTest(unittest.TestCase):
         )
         self.assertIn(
             "./plugins/agent-usage-exporter/extensions/agent-usage-exporter.ts",
-            package["pi"]["extensions"],
+            repository_package["pi"]["extensions"],
         )
-        self.assertIn(
-            "./plugins/agent-usage-exporter/extensions/agent-usage-exporter-omp.ts",
-            package["omp"]["extensions"],
+        self.assertNotIn("omp", repository_package)
+        self.assertEqual(
+            plugin_package["omp"]["extensions"],
+            ["./extensions/agent-usage-exporter-omp.ts"],
+        )
+        self.assertTrue(
+            (
+                REPOSITORY_ROOT
+                / "plugins"
+                / "agent-usage-exporter"
+                / "extensions"
+                / "agent-usage-exporter-omp.ts"
+            ).is_file()
         )
         self.assertTrue((plugin_root / ".codex-plugin" / "plugin.json").is_file())
         self.assertTrue((plugin_root / ".claude-plugin" / "plugin.json").is_file())
@@ -163,7 +198,6 @@ class MarketplaceLayoutTest(unittest.TestCase):
         alloy_config = plugin_root / "alloy" / "config.alloy"
         self.assertTrue(alloy_config.is_file())
         self.assertIn("add_metric_suffixes = false", alloy_config.read_text())
-
 
 class ClaudeMarketplaceLayoutTest(unittest.TestCase):
     def test_marketplace_entries_follow_repo_layout(self):
