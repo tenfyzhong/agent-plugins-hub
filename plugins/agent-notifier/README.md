@@ -36,7 +36,7 @@ worker POSTs the notification as JSON with `content-type: application/json`:
 {
   "host": "Codex",
   "event": "Stop",
-  "timestamp": "2026-08-14T00:00:00.000Z",
+  "timestamp": "2026-08-14 08:00:00",
   "model": "gpt-5.2-codex",
   "sessionId": "session-1",
   "cwd": "/tmp/project",
