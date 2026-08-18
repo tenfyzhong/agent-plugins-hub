@@ -11,6 +11,7 @@ import {
   cacheClaudeRateLimits,
   detectAgentHost,
   extractCodexRateLimits,
+  formatLocalDateTime,
   isNonInteractiveHookSession,
   launchNotification,
   normalizeClaudeRateLimits,
@@ -54,8 +55,10 @@ test("includes five-hour and weekly remaining quota in Telegram messages", () =>
 
   assert.match(message, /<b>5h remaining:<\/b> <code>87\.5%<\/code>/);
   assert.match(message, /<b>weekly remaining:<\/b> <code>9%<\/code>/);
-  assert.match(message, /resets <code>2026-08-10T10:00:00\.000Z<\/code>/);
-  assert.match(message, /resets <code>2026-08-15T10:00:00\.000Z<\/code>/);
+  const expectedFiveHourReset = formatLocalDateTime(new Date(1786356000 * 1000));
+  const expectedWeeklyReset = formatLocalDateTime(new Date(1786788000 * 1000));
+  assert.match(message, new RegExp(`resets <code>${expectedFiveHourReset}</code>`));
+  assert.match(message, new RegExp(`resets <code>${expectedWeeklyReset}</code>`));
 });
 
 test("builds a webhook payload with all available fields", () => {
@@ -89,6 +92,22 @@ test("omits unset fields and defaults from the webhook payload", () => {
 
   assert.deepEqual(payload, { host: "pi", event: "agent_settled", timestamp: payload.timestamp });
   assert.equal(typeof payload.timestamp, "string");
+  assert.match(payload.timestamp, /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
+});
+
+test("formats local date and time in YYYY-MM-DD HH:mm:ss", () => {
+  const date = new Date(2026, 7, 14, 9, 5, 6);
+  assert.equal(formatLocalDateTime(date), "2026-08-14 09:05:06");
+  assert.equal(formatLocalDateTime(date.getTime()), "2026-08-14 09:05:06");
+  assert.match(formatLocalDateTime(), /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
+});
+
+test("defaults message and webhook timestamps to local time instead of UTC ISO string", () => {
+  const message = buildTelegramMessage({ host: "Codex", event: "Stop" });
+  const payload = buildWebhookPayload({ host: "Codex", event: "Stop" });
+  assert.match(message, /<b>time:<\/b> <code>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}<\/code>/);
+  assert.match(payload.timestamp, /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
+  assert.doesNotMatch(payload.timestamp, /Z$/);
 });
 
 test("extracts the latest Codex five-hour and weekly rate-limit snapshot", () => {

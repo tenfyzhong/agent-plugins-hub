@@ -288,6 +288,19 @@ export function buildRateLimitStatusLine(rateLimits) {
   return parts.join(" | ");
 }
 
+export function formatLocalDateTime(value = new Date()) {
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  const pad = (num) => String(num).padStart(2, "0");
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 export function htmlEscape(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -297,7 +310,7 @@ export function htmlEscape(value) {
 
 function rateLimitMessageLine(label, window) {
   const reset = Number.isFinite(window.resetsAt)
-    ? ` (resets <code>${htmlEscape(new Date(window.resetsAt * 1000).toISOString())}</code>)`
+    ? ` (resets <code>${htmlEscape(formatLocalDateTime(new Date(window.resetsAt * 1000)))}</code>)`
     : "";
   return `<b>${label} remaining:</b> <code>${formatPercent(remainingPercent(window))}</code>${reset}`;
 }
@@ -310,7 +323,7 @@ export function buildTelegramMessage({
   cwd,
   lastMessage,
   rateLimits,
-  timestamp = new Date().toISOString(),
+  timestamp = formatLocalDateTime(),
 }) {
   const lines = [
     `👋 <b>${htmlEscape(host || "Agent")} job finished</b>`,
@@ -335,7 +348,7 @@ export function buildWebhookPayload({
   lastMessage,
   transcriptPath,
   rateLimits,
-  timestamp = new Date().toISOString(),
+  timestamp = formatLocalDateTime(),
 }) {
   const payload = {
     host: host || "Agent",
