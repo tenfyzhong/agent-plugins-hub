@@ -2,12 +2,20 @@ import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
+export function resolveWorkerExecutable(env = process.env, versions = process.versions, execPath = process.execPath) {
+  if (env?.AGENT_USAGE_NODE) return env.AGENT_USAGE_NODE;
+  if (versions?.bun) return "node";
+  return execPath;
+}
+
 const pluginRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 
-export function launchUsageExporter(agent, payload = {}, root = pluginRoot) {
+export function launchUsageExporter(agent, payload = {}, root = pluginRoot, options = {}) {
   try {
+    const executable = options.executable || resolveWorkerExecutable(options.env, options.versions, options.execPath);
+    const spawnImpl = options.spawnImpl || spawn;
     const encodedPayload = Buffer.from(JSON.stringify(payload)).toString("base64url");
-    const child = spawn(process.execPath, [join(root, "hooks", "worker.mjs"), "--agent", agent, "--payload", encodedPayload], {
+    const child = spawnImpl(executable, [join(root, "hooks", "worker.mjs"), "--agent", agent, "--payload", encodedPayload], {
       detached: true,
       stdio: "ignore",
       windowsHide: true,

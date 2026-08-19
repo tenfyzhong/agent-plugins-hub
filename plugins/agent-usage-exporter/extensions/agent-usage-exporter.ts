@@ -10,7 +10,7 @@ type SessionContext = {
 
 export function registerAgentUsageExporter(pi: ExtensionApi, agent = "pi", eventName = "session_shutdown") {
   pi.on(eventName, (event, ctx) => {
-    const sessionPath = event?.session_path || event?.sessionPath || ctx?.sessionManager?.getSessionFile?.();
+    const sessionPath = event?.session_path || event?.sessionPath || event?.session_file || event?.sessionFile || ctx?.sessionManager?.getSessionFile?.();
     launchUsageExporter(agent, sessionPath ? { ...event, session_path: sessionPath } : event || {});
   });
 }

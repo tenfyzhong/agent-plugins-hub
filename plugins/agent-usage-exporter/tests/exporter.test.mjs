@@ -17,6 +17,7 @@ import {
 } from "../lib/exporter.mjs";
 import { processUsageExport } from "../hooks/worker.mjs";
 import { isExpectedHost } from "../hooks/host-launcher.mjs";
+import { launchUsageExporter, resolveWorkerExecutable } from "../hooks/launch-exporter.mjs";
 
 test("Codex transcript parser tracks model changes and leaves partial lines pending", () => {
   const source = [
@@ -619,12 +620,82 @@ test("worker migrates a legacy path-only cursor without re-exporting it", async 
 
 test("Pi extension uses an event path or the session-manager fallback", async () => {
   const extension = await readFile(join("plugins", "agent-usage-exporter", "extensions", "agent-usage-exporter.ts"), "utf8");
-  assert.match(extension, /event\?\.session_path \|\| event\?\.sessionPath \|\| ctx\?\.sessionManager\?\.getSessionFile\?\./);
+  assert.match(extension, /event\?\.session_path \|\| event\?\.sessionPath \|\| event\?\.session_file \|\| event\?\.sessionFile \|\| ctx\?\.sessionManager\?\.getSessionFile\?\./);
   assert.match(extension, /session_path: sessionPath/);
   assert.match(extension, /session_shutdown/);
   const ompExtension = await readFile(join("plugins", "agent-usage-exporter", "extensions", "agent-usage-exporter-omp.ts"), "utf8");
   assert.match(ompExtension, /session_stop/);
 });
+
+test("resolveWorkerExecutable prefers AGENT_USAGE_NODE and falls back from Bun to node", () => {
+  assert.equal(
+    resolveWorkerExecutable({ AGENT_USAGE_NODE: "/opt/bin/custom-node" }, { bun: "1.3.0" }, "/opt/bin/omp"),
+    "/opt/bin/custom-node",
+  );
+  assert.equal(
+    resolveWorkerExecutable({}, { bun: "1.3.0" }, "/opt/bin/omp"),
+    "node",
+  );
+  assert.equal(
+    resolveWorkerExecutable({}, {}, "/usr/local/bin/node"),
+    "/usr/local/bin/node",
+  );
+});
+
+test("launchUsageExporter launches worker with Node from Bun runtime", () => {
+  let spawnedCommand;
+  let spawnedArgs;
+  const spawnImpl = (command, args) => {
+    spawnedCommand = command;
+    spawnedArgs = args;
+    return { unref() {} };
+  };
+  launchUsageExporter(
+    "oh-my-pi",
+    { session_file: "/tmp/session.jsonl" },
+    "/tmp/plugin-root",
+    {
+      spawnImpl,
+      env: {},
+      versions: { bun: "1.3.0" },
+      execPath: "/opt/homebrew/bin/omp",
+    },
+  );
+  assert.equal(spawnedCommand, "node");
+  assert.equal(spawnedArgs[0], "/tmp/plugin-root/hooks/worker.mjs");
+  assert.equal(spawnedArgs[1], "--agent");
+  assert.equal(spawnedArgs[2], "oh-my-pi");
+});
+
+test("native worker accepts session_file and sessionFile aliases", async () => {
+  const stateDirectory = await mkdtemp(join(tmpdir(), "agent-usage-exporter-"));
+  const transcript = join(stateDirectory, "session.jsonl");
+  const stateFile = join(stateDirectory, "state.json");
+  await writeFile(transcript, [
+    JSON.stringify({ type: "model_change", model: "model-omp" }),
+    JSON.stringify({ type: "message", message: { role: "assistant", usage: { input: 10, output: 5 } } }),
+  ].join("\n"));
+
+  await processUsageExport("oh-my-pi", { session_file: transcript }, {
+    stateFile,
+    root: "",
+    pricing: {},
+    post: async () => {},
+  });
+  let state = JSON.parse(await readFile(stateFile, "utf8"));
+  assert.equal(state.totals["oh-my-pi"][0].tokens, 10);
+
+  await writeFile(transcript, `${await readFile(transcript, "utf8")}\n${JSON.stringify({ type: "message", message: { role: "assistant", usage: { input: 20, output: 5 } } })}\n`);
+  await processUsageExport("oh-my-pi", { sessionFile: transcript }, {
+    stateFile,
+    root: "",
+    pricing: {},
+    post: async () => {},
+  });
+  state = JSON.parse(await readFile(stateFile, "utf8"));
+  assert.equal(state.totals["oh-my-pi"][0].tokens, 30);
+});
+
 
 test("worker aggregates cache classes by model before billing uncached input", async () => {
   const stateDirectory = await mkdtemp(join(tmpdir(), "agent-usage-exporter-"));

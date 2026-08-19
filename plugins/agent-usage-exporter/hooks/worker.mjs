@@ -29,7 +29,7 @@ async function codexUsage(payload, state, options = {}) {
 
 function sessionPath(agent, payload) {
   if (agent === "claude-code") return payload.transcript_path || payload.transcriptPath;
-  return payload.session_path || payload.sessionPath || payload.transcript_path || payload.transcriptPath;
+  return payload.session_path || payload.sessionPath || payload.session_file || payload.sessionFile || payload.transcript_path || payload.transcriptPath;
 }
 
 async function transcriptUsage(agent, transcript, state, parser, options = {}) {
