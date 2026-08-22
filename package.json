@@ -12,8 +12,7 @@
   "pi": {
     "extensions": [
       "./plugins/agent-guard/extensions/agent-guard.ts",
-      "./plugins/agent-notifier/extensions/agent-notifier.ts",
-      "./plugins/agent-usage-exporter/extensions/agent-usage-exporter.ts"
+      "./plugins/agent-notifier/extensions/agent-notifier.ts"
     ],
     "skills": [
       "./plugins/lark-cli-skills/skills"
