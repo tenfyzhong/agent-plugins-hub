@@ -18,10 +18,6 @@
     {
       "name": "agent-notifier",
       "source": "./plugins/agent-notifier"
-    },
-    {
-      "name": "agent-usage-exporter",
-      "source": "./plugins/agent-usage-exporter"
     }
   ]
 }

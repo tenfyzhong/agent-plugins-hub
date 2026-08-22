@@ -14,7 +14,6 @@ native package metadata alongside shared Agent Skills.
 ├── plugins/
 │   ├── agent-guard/                      # Cross-agent destructive-command guard
 │   ├── agent-notifier/                   # Webhook and Telegram completion notifier
-│   ├── agent-usage-exporter/              # Best-effort OTLP usage metrics
 │   └── lark-cli-skills/
 │       ├── .claude-plugin/plugin.json  # Claude Code plugin manifest
 │       ├── .codex-plugin/plugin.json   # Codex plugin manifest
@@ -51,7 +50,6 @@ Then install plugins through the Codex plugin browser or by name:
 codex plugin add lark-cli-skills@tenfyzhong-agent-plugins-hub
 codex plugin add agent-guard@tenfyzhong-agent-plugins-hub
 codex plugin add agent-notifier@tenfyzhong-agent-plugins-hub
-codex plugin add agent-usage-exporter@tenfyzhong-agent-plugins-hub
 ```
 
 ## Install with Claude Code
@@ -74,7 +72,6 @@ Then install the plugin:
 claude plugin install lark-cli-skills@tenfyzhong-agent-plugins-hub
 claude plugin install agent-guard@tenfyzhong-agent-plugins-hub
 claude plugin install agent-notifier@tenfyzhong-agent-plugins-hub
-claude plugin install agent-usage-exporter@tenfyzhong-agent-plugins-hub
 ```
 
 Claude Code namespaces plugin skills. Invoke the router explicitly with
@@ -105,7 +102,6 @@ Add this repository as an OMP marketplace and install Agent Guard as a plugin:
 omp plugin marketplace add tenfyzhong/agent-plugins-hub
 omp plugin install agent-guard@tenfyzhong-agent-plugins-hub
 omp plugin install agent-notifier@tenfyzhong-agent-plugins-hub
-omp plugin install agent-usage-exporter@tenfyzhong-agent-plugins-hub
 ```
 
 ## Agent Guard
@@ -124,38 +120,6 @@ Telegram chat. It uses native hooks for Codex, Claude Code, and Oh My Pi, plus
 a Pi extension. See
 [`plugins/agent-notifier/README.md`](plugins/agent-notifier/README.md)
 for webhook and Telegram configuration.
-
-## Agent Usage Exporter
-
-`agent-usage-exporter` sends best-effort OTLP/HTTP metrics when an agent session
-finishes. The launcher detaches immediately and always exits successfully, so an
-unavailable telemetry endpoint cannot delay or fail a session. All four hosts
-incrementally parse their own JSONL session records: Codex token-count events,
-Claude Code assistant records with explicit model and usage, and Pi/Oh My Pi
-model-change plus assistant usage records. No transcript content is exported.
-
-By default it posts to `http://127.0.0.1:4318/v1/metrics` and writes private
-incremental state to `${XDG_STATE_HOME:-~/.local/state}/agent-usage-exporter`.
-Set `AGENT_USAGE_OTLP_ENDPOINT` and `AGENT_USAGE_STATE_DIR` to override those
-locations. `AGENT_USAGE_PRICING_FILE` may point at a JSON object whose model
-entries specify USD-per-million `input`, `cached_input`, `cache_write`, and
-`output` rates; it overrides the bundled pricing. `_aliases` maps an exact raw
-model ID to a priced model without changing the emitted model label. Unknown
-models still export tokens but have no cost series. The bundled DeepSeek rates
-are a 2026-08-14 snapshot; see the plugin README for the announced 2026-08-16
-price change and official source.
-
-Use the checked-in [Alloy configuration](plugins/agent-usage-exporter/alloy/agent-usage-exporter.alloy)
-and replace its remote-write endpoint. It explicitly disables Alloy suffixes, so
-the Prometheus metric names below stay exactly as shown:
-
-The cumulative metric names are `agent_usage_tokens` (labels: `agent`, `model`,
-`token_type`) and `agent_usage_cost_usd` (labels: `agent`, `model`). `input`
-includes cached and cache-write input, so query one token type at a time or use
-the separate `cached_input` and `cache_write` series rather than summing every
-token type. Remove any prior personal usage exporter hook before enabling this
-plugin to avoid duplicate series. See the plugin
-[README](plugins/agent-usage-exporter/README.md) for configuration details.
 
 ## Lark CLI Skills
 
