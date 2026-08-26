@@ -21,6 +21,13 @@ native package metadata alongside shared Agent Skills.
 │       ├── internal-skills/            # Unregistered upstream skills
 │       ├── LICENSE
 │       └── .upstream-revision
+│   └── obsidian-skills/
+│       ├── .claude-plugin/plugin.json  # Claude Code plugin manifest
+│       ├── .codex-plugin/plugin.json   # Codex plugin manifest
+│       ├── skills/obsidian/             # Registered lazy router skill
+│       ├── internal-skills/             # Unregistered upstream skills
+│       ├── LICENSE
+│       └── .upstream-revision
 ├── package.json                        # Pi package manifest
 ├── scripts/                            # Marketplace maintenance scripts
 └── tests/                              # Marketplace and sync validation
@@ -48,6 +55,7 @@ Then install plugins through the Codex plugin browser or by name:
 
 ```bash
 codex plugin add lark-cli-skills@tenfyzhong-agent-plugins-hub
+codex plugin add obsidian-skills@tenfyzhong-agent-plugins-hub
 codex plugin add agent-guard@tenfyzhong-agent-plugins-hub
 codex plugin add agent-notifier@tenfyzhong-agent-plugins-hub
 ```
@@ -70,6 +78,7 @@ Then install the plugin:
 
 ```bash
 claude plugin install lark-cli-skills@tenfyzhong-agent-plugins-hub
+claude plugin install obsidian-skills@tenfyzhong-agent-plugins-hub
 claude plugin install agent-guard@tenfyzhong-agent-plugins-hub
 claude plugin install agent-notifier@tenfyzhong-agent-plugins-hub
 ```
@@ -92,7 +101,8 @@ pi install .
 ```
 
 Invoke the router explicitly with `/skill:lark`, or let Pi select it from the
-request context.
+request context. Invoke the Obsidian router explicitly with `/skill:obsidian`,
+or let Pi select it from the request context.
 
 ## Install with Oh My Pi
 
@@ -152,6 +162,34 @@ Run the same process locally with:
 
 ```bash
 ./scripts/sync_lark_cli_skills.sh
+python3 -m unittest discover -s tests
+```
+
+The mirrored skills and plugin-level `LICENSE` are distributed under the
+upstream project's MIT license. The surrounding repository uses its own MIT
+license.
+
+## Obsidian Skills
+
+The `obsidian-skills` plugin mirrors every skill under
+[`kepano/obsidian-skills/skills`](https://github.com/kepano/obsidian-skills/tree/main/skills).
+The manifest registers only the lightweight `obsidian` router under `skills/`;
+the upstream skills are stored under `internal-skills/` and remain unregistered.
+The router activates for Obsidian requests and work in an Obsidian vault, then
+loads only the selected workflow. Each snapshot records its source commit in
+`plugins/obsidian-skills/.upstream-revision`.
+
+### Upstream synchronization
+
+The `Sync Obsidian skills` GitHub Actions workflow checks the upstream `main`
+branch every six hours and can also be run manually. When the upstream skills
+change, it mirrors additions, updates, and removals, runs the tests, and pushes
+a signed-off synchronization commit to this repository's default branch.
+
+Run the same process locally with:
+
+```bash
+./scripts/sync_obsidian_skills.sh
 python3 -m unittest discover -s tests
 ```
 

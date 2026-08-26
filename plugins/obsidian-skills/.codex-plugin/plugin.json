@@ -1,0 +1,27 @@
+{
+  "name": "obsidian-skills",
+  "version": "0.1.0",
+  "description": "Lazy-loaded Obsidian skills for creating, editing, and managing vault content from Codex.",
+  "author": {
+    "name": "tenfyzhong",
+    "url": "https://github.com/tenfyzhong"
+  },
+  "homepage": "https://github.com/kepano/obsidian-skills",
+  "repository": "https://github.com/tenfyzhong/agent-plugins-hub",
+  "license": "MIT",
+  "keywords": ["obsidian", "vault", "markdown", "knowledge-management"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Obsidian Skills",
+    "shortDescription": "Create and manage content in Obsidian vaults.",
+    "longDescription": "A synchronized collection of Obsidian skills for markdown notes, Bases, JSON Canvas files, and the Obsidian CLI.",
+    "developerName": "tenfyzhong",
+    "category": "Productivity",
+    "capabilities": ["Obsidian", "Markdown", "Knowledge Management"],
+    "defaultPrompt": [
+      "Create a note in my Obsidian vault with properties and wikilinks.",
+      "Create a Base to organize my project notes.",
+      "Help me manage this Obsidian vault."
+    ]
+  }
+}

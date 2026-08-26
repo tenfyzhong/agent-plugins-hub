@@ -12,6 +12,10 @@
       "source": "./plugins/lark-cli-skills"
     },
     {
+      "name": "obsidian-skills",
+      "source": "./plugins/obsidian-skills"
+    },
+    {
       "name": "agent-guard",
       "source": "./plugins/agent-guard"
     },

@@ -1,0 +1,14 @@
+{
+  "name": "obsidian-skills",
+  "version": "0.1.0",
+  "description": "Lazy-loaded Obsidian skills for creating, editing, and managing vault content from Claude Code.",
+  "author": {
+    "name": "tenfyzhong",
+    "url": "https://github.com/tenfyzhong"
+  },
+  "homepage": "https://github.com/kepano/obsidian-skills",
+  "repository": "https://github.com/tenfyzhong/agent-plugins-hub",
+  "license": "MIT",
+  "keywords": ["obsidian", "vault", "markdown", "knowledge-management"],
+  "skills": "./skills/"
+}
