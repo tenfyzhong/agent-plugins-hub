@@ -34,5 +34,7 @@ out of the agent's initial skill metadata list.
   plugin or theme development.
 - Use `defuddle` only when clean Markdown extraction from a web page is part of
   the request.
-- When creating a new document, place it in `inbox/agent/` unless the user
+- When creating a new document, find the top-level directory whose name
+  contains `inbox` (case-insensitive, such as `0-inbox` or `00-Inbox`) and
+  place it in that directory's `agent/` subdirectory, unless the user
   explicitly specifies a different location.
