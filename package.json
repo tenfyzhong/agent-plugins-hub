@@ -6,7 +6,8 @@
   "keywords": [
     "pi-package",
     "lark",
-    "feishu"
+    "feishu",
+    "obsidian"
   ],
   "license": "MIT",
   "pi": {
@@ -15,7 +16,8 @@
       "./plugins/agent-notifier/extensions/agent-notifier.ts"
     ],
     "skills": [
-      "./plugins/lark-cli-skills/skills"
+      "./plugins/lark-cli-skills/skills",
+      "./plugins/obsidian-skills/skills"
     ]
   }
 }
