@@ -22,6 +22,10 @@
     {
       "name": "agent-notifier",
       "source": "./plugins/agent-notifier"
+    },
+    {
+      "name": "cloudflare-kb",
+      "source": "./plugins/cloudflare-kb"
     }
   ]
 }

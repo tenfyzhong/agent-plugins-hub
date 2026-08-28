@@ -14,6 +14,7 @@ native package metadata alongside shared Agent Skills.
 ├── plugins/
 │   ├── agent-guard/                      # Cross-agent destructive-command guard
 │   ├── agent-notifier/                   # Webhook and Telegram completion notifier
+│   ├── cloudflare-kb/                    # Semantic search over personal knowledge base
 │   └── lark-cli-skills/
 │       ├── .claude-plugin/plugin.json  # Claude Code plugin manifest
 │       ├── .codex-plugin/plugin.json   # Codex plugin manifest
@@ -58,7 +59,7 @@ codex plugin add lark-cli-skills@tenfyzhong-agent-plugins-hub
 codex plugin add obsidian-skills@tenfyzhong-agent-plugins-hub
 codex plugin add agent-guard@tenfyzhong-agent-plugins-hub
 codex plugin add agent-notifier@tenfyzhong-agent-plugins-hub
-```
+codex plugin add cloudflare-kb@tenfyzhong-agent-plugins-hub
 
 ## Install with Claude Code
 
@@ -81,7 +82,7 @@ claude plugin install lark-cli-skills@tenfyzhong-agent-plugins-hub
 claude plugin install obsidian-skills@tenfyzhong-agent-plugins-hub
 claude plugin install agent-guard@tenfyzhong-agent-plugins-hub
 claude plugin install agent-notifier@tenfyzhong-agent-plugins-hub
-```
+claude plugin install cloudflare-kb@tenfyzhong-agent-plugins-hub
 
 Claude Code namespaces plugin skills. Invoke the router explicitly with
 `/lark-cli-skills:lark`, or let Claude select it from the request context.
@@ -112,7 +113,7 @@ Add this repository as an OMP marketplace and install Agent Guard as a plugin:
 omp plugin marketplace add tenfyzhong/agent-plugins-hub
 omp plugin install agent-guard@tenfyzhong-agent-plugins-hub
 omp plugin install agent-notifier@tenfyzhong-agent-plugins-hub
-```
+omp plugin install cloudflare-kb@tenfyzhong-agent-plugins-hub
 
 ## Agent Guard
 
@@ -130,6 +131,14 @@ Telegram chat. It uses native hooks for Codex, Claude Code, and Oh My Pi, plus
 a Pi extension. See
 [`plugins/agent-notifier/README.md`](plugins/agent-notifier/README.md)
 for webhook and Telegram configuration.
+
+## Cloudflare Knowledge Base
+
+The `cloudflare-kb` plugin connects AI agents to your personal knowledge base
+indexed in Cloudflare Vectorize. It supports OpenAI Codex (with OAuth authorization),
+Claude Code, Oh My Pi, Pi, and ChatGPT (Web and Mobile Custom GPT Actions). See
+[`plugins/cloudflare-kb/README.md`](plugins/cloudflare-kb/README.md) for full
+configuration and deployment instructions.
 
 ## Lark CLI Skills
 

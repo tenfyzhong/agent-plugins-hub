@@ -1,0 +1,21 @@
+{
+  "name": "cloudflare-kb",
+  "version": "0.1.0",
+  "description": "Semantic knowledge base search plugin for Cloudflare Vectorize and personal notes from Claude Code.",
+  "author": {
+    "name": "tenfyzhong",
+    "url": "https://github.com/tenfyzhong"
+  },
+  "homepage": "https://github.com/tenfyzhong/cf-kb-api",
+  "repository": "https://github.com/tenfyzhong/agent-plugins-hub",
+  "license": "MIT",
+  "keywords": [
+    "cloudflare",
+    "vectorize",
+    "knowledge-base",
+    "search",
+    "rag",
+    "obsidian"
+  ],
+  "skills": "./skills/"
+}

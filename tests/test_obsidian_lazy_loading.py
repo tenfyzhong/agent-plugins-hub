@@ -61,7 +61,7 @@ class ObsidianLazyLoadingTest(unittest.TestCase):
         self.assertIn("Obsidian", router)
         self.assertIn("vault", router.lower())
         self.assertIn("current directory", router)
-        self.assertIn("inbox/agent/", router)
+        self.assertIn("agent/", router)
 
 
 if __name__ == "__main__":

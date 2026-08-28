@@ -147,6 +147,29 @@ class MarketplaceLayoutTest(unittest.TestCase):
                 / "agent-notifier-omp.ts"
             ).is_file()
         )
+    def test_cloudflare_kb_uses_native_omp_plugin_manifest(self):
+        repository_package = json.loads(
+            (REPOSITORY_ROOT / "package.json").read_text(encoding="utf-8")
+        )
+        plugin_package = json.loads(
+            (
+                REPOSITORY_ROOT / "plugins" / "cloudflare-kb" / "package.json"
+            ).read_text(encoding="utf-8")
+        )
+
+        plugin_entry = "./extensions/cloudflare-kb-omp.ts"
+        self.assertNotIn("omp", repository_package)
+        self.assertEqual(plugin_package["omp"]["extensions"], [plugin_entry])
+        self.assertTrue(
+            (
+                REPOSITORY_ROOT
+                / "plugins"
+                / "cloudflare-kb"
+                / "extensions"
+                / "cloudflare-kb-omp.ts"
+            ).is_file()
+        )
+
 
 class ClaudeMarketplaceLayoutTest(unittest.TestCase):
     def test_marketplace_entries_follow_repo_layout(self):
