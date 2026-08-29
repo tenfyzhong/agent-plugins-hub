@@ -53,10 +53,10 @@
       "category": "Productivity"
     },
     {
-      "name": "cloudflare-kb",
+      "name": "cf-knowbase",
       "source": {
         "source": "local",
-        "path": "./plugins/cloudflare-kb"
+        "path": "./plugins/cf-knowbase"
       },
       "policy": {
         "installation": "AVAILABLE",

@@ -14,12 +14,12 @@ Search and retrieve personal knowledge base content, notes, documentation, and t
 
 ## How to use
 
-### Option 1: Using `kb-cli` (Recommended)
+### Option 1: Using `knowbase` CLI (Recommended)
 
-When `kb-cli` is installed locally, execute:
+When `knowbase` is installed locally, execute:
 
 ```bash
-kb-cli search "<query>"
+knowbase search "<query>"
 ```
 
 Options:
@@ -37,8 +37,8 @@ If the `search_knowledge_base` MCP tool is available in your session:
 If calling the Cloudflare Worker API directly:
 
 ```bash
-curl -X POST "$CF_KB_API_URL/search" \
-  -H "Authorization: Bearer $CF_KB_API_TOKEN" \
+curl -X POST "$CF_KNOWBASE_API_URL/search" \
+  -H "Authorization: Bearer $CF_KNOWBASE_API_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"query": "<query>", "topK": 5}'
 ```

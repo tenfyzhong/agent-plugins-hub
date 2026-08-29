@@ -24,8 +24,8 @@
       "source": "./plugins/agent-notifier"
     },
     {
-      "name": "cloudflare-kb",
-      "source": "./plugins/cloudflare-kb"
+      "name": "cf-knowbase",
+      "source": "./plugins/cf-knowbase"
     }
   ]
 }

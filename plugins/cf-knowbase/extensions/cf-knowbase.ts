@@ -20,11 +20,11 @@ export async function executeKbSearch(
   }
 
   try {
-    const { stdout } = await execFileAsync("kb-cli", args, { timeout: 15000 });
+    const { stdout } = await execFileAsync("knowbase", args, { timeout: 15000 });
     return stdout;
   } catch (err) {
     return JSON.stringify({
-      error: "Failed to execute kb-cli",
+      error: "Failed to execute knowbase CLI",
       message: err instanceof Error ? err.message : String(err)
     });
   }

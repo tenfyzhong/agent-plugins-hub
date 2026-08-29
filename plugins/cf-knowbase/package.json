@@ -1,11 +1,11 @@
 {
-  "name": "@tenfyzhong/cloudflare-kb",
+  "name": "@tenfyzhong/cf-knowbase",
   "version": "0.1.0",
   "description": "Semantic knowledge base search plugin for Cloudflare Vectorize.",
   "license": "MIT",
   "omp": {
     "extensions": [
-      "./extensions/cloudflare-kb-omp.ts"
+      "./extensions/cf-knowbase-omp.ts"
     ]
   }
 }

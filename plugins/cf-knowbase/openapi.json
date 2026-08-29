@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://cf-kb-api.workers.dev"
+      "url": "https://cf-knowbase-api.workers.dev"
     }
   ],
   "paths": {
