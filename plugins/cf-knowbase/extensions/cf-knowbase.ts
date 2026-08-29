@@ -7,7 +7,7 @@ type ExtensionAPI = {
   on(name: string, handler: (event: unknown, context: unknown) => Promise<unknown>): void;
 };
 
-export async function executeKbSearch(
+export async function executeKnowbaseSearch(
   query: string,
   options: { topK?: number; source?: string } = {}
 ): Promise<string> {
@@ -40,7 +40,7 @@ export function registerCloudflareKb(pi: ExtensionAPI): void {
       return { error: "Missing required parameter: query" };
     }
 
-    const output = await executeKbSearch(query, {
+    const output = await executeKnowbaseSearch(query, {
       topK: ev.input?.topK,
       source: ev.input?.source
     });
