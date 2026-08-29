@@ -14,12 +14,12 @@ Search and retrieve personal knowledge base content, notes, documentation, and t
 
 ## How to use
 
-### Option 1: Using `cf-kb-client` CLI (Recommended)
+### Option 1: Using `kb-cli` (Recommended)
 
-When `cf-kb-client` is installed locally, execute:
+When `kb-cli` is installed locally, execute:
 
 ```bash
-cf-kb-client search "<query>"
+kb-cli search "<query>"
 ```
 
 Options:
