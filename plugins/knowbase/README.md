@@ -1,14 +1,14 @@
-# Cloudflare Knowledge Base Plugin (`cf-knowbase`)
+# Knowledge Base Plugin (`knowbase`)
 
 Cross-agent plugin, skill, and MCP server for semantic search over personal notes (Obsidian), documents, code repositories, and articles indexed in Cloudflare Vectorize.
 
 ## Supported Agents
 
-- **Claude Code**: Install as a Plugin (`claude plugin install`), automatically activating the MCP server and skill (`/cf-knowbase:cf-knowbase`).
+- **Claude Code**: Install as a Plugin (`claude plugin install`), automatically activating the MCP server and skill (`/knowbase:knowbase`).
 - **OpenAI Codex**: Install as a Plugin (`codex plugin add`) with OAuth connection authorization, MCP server, and skills.
 - **Oh My Pi (OMP)**: Install as a Plugin (`omp plugin install`), automatically loading the native extension and MCP server.
 - **Pi**: Install as an Extension (`pi install`), registering the `search_knowledge_base` native tool into Pi.
-- **Claude Desktop & Cursor**: Direct stdio MCP server (`plugins/cf-knowbase/mcp.mjs`).
+- **Claude Desktop & Cursor**: Direct stdio MCP server (`plugins/knowbase/mcp.mjs`).
 - **ChatGPT (Web & Mobile)**: Custom GPT / Action with OAuth 2.0 authorization and OpenAPI schema.
 
 ---
@@ -18,10 +18,10 @@ Cross-agent plugin, skill, and MCP server for semantic search over personal note
 Add the marketplace and install the plugin:
 ```bash
 claude plugin marketplace add tenfyzhong/agent-plugins-hub
-claude plugin install cf-knowbase@tenfyzhong-agent-plugins-hub
+claude plugin install knowbase@tenfyzhong-agent-plugins-hub
 ```
 
-Claude Code automatically mounts the bundled MCP server (`mcp.mjs`) and skill. Invoke explicitly with `/cf-knowbase:cf-knowbase` or let Claude automatically query your personal knowledge base during tasks.
+Claude Code automatically mounts the bundled MCP server (`mcp.mjs`) and skill. Invoke explicitly with `/knowbase:knowbase` or let Claude automatically query your personal knowledge base during tasks.
 
 ---
 
@@ -30,7 +30,7 @@ Claude Code automatically mounts the bundled MCP server (`mcp.mjs`) and skill. I
 Add the marketplace and install the plugin:
 ```bash
 codex plugin marketplace add tenfyzhong/agent-plugins-hub
-codex plugin add cf-knowbase@tenfyzhong-agent-plugins-hub
+codex plugin add knowbase@tenfyzhong-agent-plugins-hub
 ```
 
 ### Authorization & Connection in Codex / ChatGPT
@@ -46,10 +46,10 @@ When prompted to connect your knowledge base:
 
 ```bash
 omp plugin marketplace add tenfyzhong/agent-plugins-hub
-omp plugin install cf-knowbase@tenfyzhong-agent-plugins-hub
+omp plugin install knowbase@tenfyzhong-agent-plugins-hub
 ```
 
-OMP loads the native extension (`extensions/cf-knowbase-omp.ts`) and MCP server.
+OMP loads the native extension (`extensions/knowbase-omp.ts`) and MCP server.
 
 ---
 
@@ -66,7 +66,7 @@ For local development from repository root:
 pi install .
 ```
 
-Pi automatically activates the `extensions/cf-knowbase.ts` extension, providing the `search_knowledge_base` tool to all Pi sessions.
+Pi automatically activates the `extensions/knowbase.ts` extension, providing the `search_knowledge_base` tool to all Pi sessions.
 
 ---
 
@@ -80,7 +80,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
   "mcpServers": {
     "personal-knowledge-base": {
       "command": "node",
-      "args": ["/Users/zhongtenghui/go/src/github.com/tenfyzhong/agent-plugins-hub/plugins/cf-knowbase/mcp.mjs"]
+      "args": ["/Users/zhongtenghui/go/src/github.com/tenfyzhong/agent-plugins-hub/plugins/knowbase/mcp.mjs"]
     }
   }
 }

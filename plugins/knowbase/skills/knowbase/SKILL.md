@@ -1,8 +1,9 @@
 ---
+name: knowbase
 description: Search personal knowledge base (Obsidian notes, documentation, git repositories, and web articles) using semantic vector search.
 ---
 
-# Cloudflare Knowledge Base Search
+# Knowledge Base Search
 
 Search and retrieve personal knowledge base content, notes, documentation, and technical articles stored in Cloudflare Vectorize.
 
@@ -37,8 +38,8 @@ If the `search_knowledge_base` MCP tool is available in your session:
 If calling the Cloudflare Worker API directly:
 
 ```bash
-curl -X POST "$CF_KNOWBASE_API_URL/search" \
-  -H "Authorization: Bearer $CF_KNOWBASE_API_TOKEN" \
+curl -X POST "https://knowbase-api.tenfy.cn/search" \
+  -H "Authorization: Bearer $KNOWBASE_API_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"query": "<query>", "topK": 5}'
 ```

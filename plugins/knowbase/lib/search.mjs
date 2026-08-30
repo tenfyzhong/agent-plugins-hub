@@ -3,8 +3,8 @@ import os from "node:os";
 import path from "node:path";
 
 export function loadConfig() {
-  const envUrl = process.env.CF_KNOWBASE_API_URL || process.env.KNOWBASE_API_URL;
-  const envToken = process.env.CF_KNOWBASE_API_TOKEN || process.env.KNOWBASE_API_TOKEN;
+  const envUrl = process.env.KNOWBASE_API_URL;
+  const envToken = process.env.KNOWBASE_API_TOKEN;
 
   if (envUrl && envToken) {
     return {
@@ -14,7 +14,6 @@ export function loadConfig() {
   }
 
   const configPath =
-    process.env.CF_KNOWBASE_CONFIG_PATH ||
     process.env.KNOWBASE_CONFIG_PATH ||
     path.join(os.homedir(), ".config", "knowbase", "config.json");
 
@@ -67,7 +66,7 @@ export async function searchKnowledgeBase(options) {
   const config = loadConfig();
   if (!config) {
     throw new Error(
-      "Knowledge Base credentials not found. Please create '~/.config/knowbase/config.json' or set CF_KNOWBASE_API_URL and CF_KNOWBASE_API_TOKEN environment variables."
+      "Knowledge Base credentials not found. Please create '~/.config/knowbase/config.json' or set KNOWBASE_API_URL and KNOWBASE_API_TOKEN environment variables."
     );
   }
 
@@ -77,7 +76,7 @@ export async function searchKnowledgeBase(options) {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${config.apiToken}`,
-      "User-Agent": "CF-Knowbase-MCP/1.0"
+      "User-Agent": "Knowbase-MCP/1.0"
     },
     body: JSON.stringify({
       query: options.query,

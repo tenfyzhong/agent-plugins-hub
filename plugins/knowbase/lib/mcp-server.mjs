@@ -52,7 +52,7 @@ export async function handleJsonRpcMessage(message) {
           tools: {}
         },
         serverInfo: {
-          name: "cf-knowbase",
+          name: "knowbase",
           version: "0.1.0"
         }
       }

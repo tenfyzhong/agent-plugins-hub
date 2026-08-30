@@ -24,8 +24,8 @@
       "source": "./plugins/agent-notifier"
     },
     {
-      "name": "cf-knowbase",
-      "source": "./plugins/cf-knowbase"
+      "name": "knowbase",
+      "source": "./plugins/knowbase"
     }
   ]
 }

@@ -1,21 +1,21 @@
 {
   "schema_version": "v1",
   "name_for_human": "Cloudflare Knowledge Base",
-  "name_for_model": "cf_knowbase",
+  "name_for_model": "knowbase",
   "description_for_human": "Semantic search over your personal notes, documents, and web content.",
   "description_for_model": "Plugin for semantically searching and retrieving personal notes, obsidian documents, code repositories, and articles stored in Cloudflare Vectorize.",
   "auth": {
     "type": "oauth",
-    "client_url": "https://cf-knowbase-api.workers.dev/oauth/authorize",
+    "client_url": "https://knowbase-api.tenfy.cn/oauth/authorize",
     "scope": "read",
-    "authorization_url": "https://cf-knowbase-api.workers.dev/oauth/token",
+    "authorization_url": "https://knowbase-api.tenfy.cn/oauth/token",
     "authorization_content_type": "application/json"
   },
   "api": {
     "type": "openapi",
-    "url": "https://cf-knowbase-api.workers.dev/openapi.json"
+    "url": "https://knowbase-api.tenfy.cn/openapi.json"
   },
   "logo_url": "https://raw.githubusercontent.com/tenfyzhong/agent-plugins-hub/main/picture/logo.png",
   "contact_email": "tenfy@tenfy.cn",
-  "legal_info_url": "https://github.com/tenfyzhong/cf-knowbase-api"
+  "legal_info_url": "https://knowbase-api.tenfy.cn"
 }

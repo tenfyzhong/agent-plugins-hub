@@ -4,7 +4,7 @@ info:
   description: Semantic search API powered by Cloudflare Workers AI and Vectorize.
   version: 0.1.0
 servers:
-  - url: https://cf-knowbase-api.workers.dev
+  - url: https://knowbase-api.tenfy.cn
 paths:
   /search:
     post:
