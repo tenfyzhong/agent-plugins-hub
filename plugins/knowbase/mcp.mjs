@@ -4,7 +4,6 @@ import { handleJsonRpcMessage } from "./lib/mcp-server.mjs";
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout,
   terminal: false
 });
 

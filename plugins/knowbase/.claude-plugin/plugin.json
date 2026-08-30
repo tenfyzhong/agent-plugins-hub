@@ -18,10 +18,5 @@
     "obsidian"
   ],
   "skills": "./skills/",
-  "mcpServers": {
-    "knowbase": {
-      "command": "node",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp.mjs"]
-    }
-  }
+  "mcpServers": "./.mcp.json"
 }

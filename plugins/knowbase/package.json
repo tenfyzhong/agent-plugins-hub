@@ -7,14 +7,7 @@
     "extensions": [
       "./extensions/knowbase-omp.ts"
     ],
-    "mcpServers": {
-      "knowbase": {
-        "command": "node",
-        "args": [
-          "${PLUGIN_ROOT}/mcp.mjs"
-        ]
-      }
-    }
+    "mcpServers": "./.mcp.json"
   },
   "pi": {
     "extensions": [
