@@ -1,7 +1,7 @@
 {
   "name": "@tenfyzhong/knowbase",
-  "version": "0.2.0",
-  "description": "Semantic knowledge base search plugin with a remote OAuth-authenticated MCP server.",
+  "version": "0.2.0+codex.20260830164611",
+  "description": "Semantic knowledge base search plugin with configurable local and remote MCP connections.",
   "license": "MIT",
   "omp": {
     "extensions": [

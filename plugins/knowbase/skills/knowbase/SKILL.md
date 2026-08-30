@@ -32,14 +32,15 @@ Options:
 
 If the `search_knowledge_base` MCP tool is available in your session:
 - Call `search_knowledge_base(query="...", topK=5, source="...")`.
-- If the tool requests authentication, complete the OAuth connection. Enter the deployment `API_TOKEN` only on the Knowbase authorization page; do not place it in chat or plugin configuration.
+- For the bundled local adapter, configure `KNOWBASE_API_URL` and `KNOWBASE_API_TOKEN` in the environment or `~/.config/knowbase/config.json`; never put credentials in chat.
+- For a directly connected remote MCP server, complete the OAuth connection and enter the deployment `API_TOKEN` only on the Knowbase authorization page.
 
 ### Option 3: Direct API Request
 
 If calling the Cloudflare Worker API directly:
 
 ```bash
-curl -X POST "https://knowbase-api.tenfy.cn/search" \
+curl -X POST "$KNOWBASE_API_URL/search" \
   -H "Authorization: Bearer $KNOWBASE_API_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"query": "<query>", "topK": 5}'

@@ -170,7 +170,7 @@ class MarketplaceLayoutTest(unittest.TestCase):
             ).is_file()
         )
 
-    def test_knowbase_uses_remote_mcp_oauth(self):
+    def test_knowbase_uses_configurable_stdio_mcp(self):
         plugin_root = REPOSITORY_ROOT / "plugins" / "knowbase"
         mcp_config = json.loads(
             (plugin_root / ".mcp.json").read_text(encoding="utf-8")
@@ -179,10 +179,17 @@ class MarketplaceLayoutTest(unittest.TestCase):
         self.assertEqual(
             server_config,
             {
-                "type": "http",
-                "url": "https://knowbase-api.tenfy.cn/mcp",
+                "command": "node",
+                "args": ["./mcp.mjs"],
+                "cwd": ".",
+                "env_vars": [
+                    "KNOWBASE_API_URL",
+                    "KNOWBASE_API_TOKEN",
+                    "KNOWBASE_CONFIG_PATH",
+                ],
             },
         )
+        self.assertNotIn("url", server_config)
 
     def test_knowbase_codex_manifest_uses_supported_fields(self):
         manifest = json.loads(

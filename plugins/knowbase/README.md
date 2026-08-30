@@ -4,8 +4,8 @@ Cross-agent plugin, skill, and MCP server for semantic search over personal note
 
 ## Supported Agents
 
-- **Claude Code**: Install as a Plugin (`claude plugin install`), automatically activating the remote MCP server and skill (`/knowbase:knowbase`).
-- **OpenAI Codex**: Install as a Plugin (`codex plugin add`) with the remote MCP server and OAuth authentication.
+- **Claude Code**: Install as a Plugin (`claude plugin install`), automatically activating the configurable local MCP adapter and skill (`/knowbase:knowbase`).
+- **OpenAI Codex**: Install as a Plugin (`codex plugin add`) with the configurable local MCP adapter, or connect directly to a deployment's remote OAuth MCP endpoint.
 - **Oh My Pi (OMP)**: Install as a Plugin (`omp plugin install`), automatically loading the native extension and MCP server.
 - **Pi**: Install as an Extension (`pi install`), registering the `search_knowledge_base` native tool into Pi.
 - **Claude Desktop & Cursor**: Direct stdio MCP server (`plugins/knowbase/mcp.mjs`).
@@ -22,7 +22,14 @@ claude plugin marketplace add tenfyzhong/agent-plugins-hub
 claude plugin install knowbase@tenfyzhong-agent-plugins-hub
 ```
 
-Claude Code automatically connects to `https://knowbase-api.tenfy.cn/mcp` and loads the skill. Complete the OAuth connection when prompted, then invoke `/knowbase:knowbase` explicitly or let Claude query the knowledge base during tasks.
+Configure the deployment URL and API token before starting Claude Code:
+
+```fish
+set -gx KNOWBASE_API_URL "https://your-knowbase.example.com"
+set -gx KNOWBASE_API_TOKEN "your-api-token"
+```
+
+The plugin starts its bundled MCP adapter and loads the skill. It does not contain a default deployment URL. Invoke `/knowbase:knowbase` explicitly or let Claude query the knowledge base during tasks.
 
 ---
 
@@ -34,7 +41,32 @@ codex plugin marketplace add tenfyzhong/agent-plugins-hub
 codex plugin add knowbase@tenfyzhong-agent-plugins-hub
 ```
 
-The plugin fixes the MCP URL at `https://knowbase-api.tenfy.cn/mcp`; users do not configure an API URL or store an API token in plugin files. Select **Authenticate** when prompted. The Knowbase authorization page asks for the deployment `API_TOKEN`, validates it server-side, and returns independent short-lived OAuth credentials to Codex.
+Configure the deployment URL and API token outside the plugin:
+
+```fish
+set -gx KNOWBASE_API_URL "https://your-knowbase.example.com"
+set -gx KNOWBASE_API_TOKEN "your-api-token"
+```
+
+Alternatively, create `~/.config/knowbase/config.json`:
+
+```json
+{
+  "apiUrl": "https://your-knowbase.example.com",
+  "apiToken": "your-api-token"
+}
+```
+
+The plugin contains no default deployment URL. Restart Codex after changing the environment or configuration file.
+
+To use the deployment's remote OAuth MCP endpoint instead of the bundled adapter, add it separately and authenticate:
+
+```fish
+codex mcp add knowbase-remote --url "$KNOWBASE_API_URL/mcp"
+codex mcp login knowbase-remote
+```
+
+The authorization page asks for the deployment `API_TOKEN`; Codex receives only the issued OAuth tokens.
 
 ---
 
@@ -89,9 +121,9 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 The backend must be deployed before registering the connection.
 
 1. In ChatGPT Web, open **Settings > Security and login** and enable **Developer mode**.
-2. Open **ChatGPT Plugins**, select the plus button, and add this MCP URL:
+2. Open **ChatGPT Plugins**, select the plus button, and add your deployment's MCP URL:
    ```text
-   https://knowbase-api.tenfy.cn/mcp
+   https://your-knowbase.example.com/mcp
    ```
 3. Confirm that ChatGPT discovers the `search_knowledge_base` tool.
 4. Copy the registered connection ID from the browser URL. It starts with `plugin_asdk_app`.
@@ -105,13 +137,13 @@ The connection URL is publisher-controlled. The `API_TOKEN` is never stored in t
 To use in ChatGPT Web or the iOS/Android ChatGPT app:
 1. Go to **ChatGPT > Explore GPTs > Create**.
 2. Go to **Configure > Actions > Create new action**.
-3. In **Schema**, import from URL or paste:
-   `https://knowbase-api.tenfy.cn/openapi.json`
+3. In **Schema**, import from your deployment URL or paste its schema:
+   `https://your-knowbase.example.com/openapi.json`
 4. Under **Authentication**, select **OAuth**:
    - **Client ID**: `chatgpt`
    - **Client Secret**: any string (e.g. `secret`)
-   - **Authorization URL**: `https://knowbase-api.tenfy.cn/oauth/authorize`
-   - **Token URL**: `https://knowbase-api.tenfy.cn/oauth/token`
+   - **Authorization URL**: `https://your-knowbase.example.com/oauth/authorize`
+   - **Token URL**: `https://your-knowbase.example.com/oauth/token`
    - **Scope**: `read`
    - **Token Exchange Method**: `Default (POST request)`
 5. Save and click **Connect**. A mobile-responsive web page will open where you enter your `API_TOKEN` to authorize.

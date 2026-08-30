@@ -1,8 +1,14 @@
 {
   "mcpServers": {
     "knowbase": {
-      "type": "http",
-      "url": "https://knowbase-api.tenfy.cn/mcp"
+      "command": "node",
+      "args": ["./mcp.mjs"],
+      "cwd": ".",
+      "env_vars": [
+        "KNOWBASE_API_URL",
+        "KNOWBASE_API_TOKEN",
+        "KNOWBASE_CONFIG_PATH"
+      ]
     }
   }
 }

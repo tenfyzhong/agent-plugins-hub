@@ -135,9 +135,11 @@ for webhook and Telegram configuration.
 ## Knowledge Base
 
 The `knowbase` plugin connects AI agents to your personal knowledge base
-indexed in Cloudflare Vectorize. It supports OpenAI Codex, Claude Code, and
-ChatGPT Web through a remote OAuth-authenticated MCP server, while retaining
-native Pi/Oh My Pi integrations and the legacy Custom GPT Action. See
+indexed in Cloudflare Vectorize. Its bundled MCP adapter requires an explicit
+deployment URL and API token, so the same plugin can target different
+deployments. ChatGPT Web and direct remote clients can use the deployment's
+OAuth-authenticated MCP endpoint. The plugin also retains native Pi/Oh My Pi
+integrations and the legacy Custom GPT Action. See
 [`plugins/knowbase/README.md`](plugins/knowbase/README.md) for full
 configuration and deployment instructions.
 ## Lark CLI Skills
