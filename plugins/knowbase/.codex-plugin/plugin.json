@@ -1,7 +1,7 @@
 {
   "name": "knowbase",
-  "version": "0.1.0",
-  "description": "Semantic knowledge base search plugin for Cloudflare Vectorize and personal notes.",
+  "version": "0.2.0",
+  "description": "OAuth-authenticated remote knowledge base search plugin for Cloudflare Vectorize and personal notes.",
   "author": {
     "name": "tenfyzhong",
     "url": "https://github.com/tenfyzhong"

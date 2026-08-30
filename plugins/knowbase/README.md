@@ -4,12 +4,13 @@ Cross-agent plugin, skill, and MCP server for semantic search over personal note
 
 ## Supported Agents
 
-- **Claude Code**: Install as a Plugin (`claude plugin install`), automatically activating the MCP server and skill (`/knowbase:knowbase`).
-- **OpenAI Codex**: Install as a Plugin (`codex plugin add`) with a local stdio MCP server and skills.
+- **Claude Code**: Install as a Plugin (`claude plugin install`), automatically activating the remote MCP server and skill (`/knowbase:knowbase`).
+- **OpenAI Codex**: Install as a Plugin (`codex plugin add`) with the remote MCP server and OAuth authentication.
 - **Oh My Pi (OMP)**: Install as a Plugin (`omp plugin install`), automatically loading the native extension and MCP server.
 - **Pi**: Install as an Extension (`pi install`), registering the `search_knowledge_base` native tool into Pi.
 - **Claude Desktop & Cursor**: Direct stdio MCP server (`plugins/knowbase/mcp.mjs`).
-- **ChatGPT (Web & Mobile)**: Custom GPT / Action with OAuth 2.0 authorization and OpenAPI schema.
+- **ChatGPT (Web)**: Remote MCP connection with OAuth 2.1; package wiring uses the registered ChatGPT connection ID.
+- **ChatGPT Custom GPT (legacy)**: OAuth Action with the OpenAPI schema remains supported.
 
 ---
 
@@ -21,7 +22,7 @@ claude plugin marketplace add tenfyzhong/agent-plugins-hub
 claude plugin install knowbase@tenfyzhong-agent-plugins-hub
 ```
 
-Claude Code automatically mounts the bundled MCP server (`mcp.mjs`) and skill. Invoke explicitly with `/knowbase:knowbase` or let Claude automatically query your personal knowledge base during tasks.
+Claude Code automatically connects to `https://knowbase-api.tenfy.cn/mcp` and loads the skill. Complete the OAuth connection when prompted, then invoke `/knowbase:knowbase` explicitly or let Claude query the knowledge base during tasks.
 
 ---
 
@@ -33,25 +34,7 @@ codex plugin marketplace add tenfyzhong/agent-plugins-hub
 codex plugin add knowbase@tenfyzhong-agent-plugins-hub
 ```
 
-### Configure Credentials for Codex
-
-The local MCP server reads the API URL and token from environment variables:
-
-```fish
-set -gx KNOWBASE_API_URL "https://knowbase-api.tenfy.cn"
-set -gx KNOWBASE_API_TOKEN "your-api-token"
-```
-
-Alternatively, create `~/.config/knowbase/config.json`:
-
-```json
-{
-  "apiUrl": "https://knowbase-api.tenfy.cn",
-  "apiToken": "your-api-token"
-}
-```
-
-Restart Codex after changing the environment or configuration file.
+The plugin fixes the MCP URL at `https://knowbase-api.tenfy.cn/mcp`; users do not configure an API URL or store an API token in plugin files. Select **Authenticate** when prompted. The Knowbase authorization page asks for the deployment `API_TOKEN`, validates it server-side, and returns independent short-lived OAuth credentials to Codex.
 
 ---
 
@@ -101,7 +84,23 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 ---
 
-## 6. Web ChatGPT / Mobile ChatGPT Custom GPT Setup
+## 6. ChatGPT Web Plugin Setup
+
+The backend must be deployed before registering the connection.
+
+1. In ChatGPT Web, open **Settings > Security and login** and enable **Developer mode**.
+2. Open **ChatGPT Plugins**, select the plus button, and add this MCP URL:
+   ```text
+   https://knowbase-api.tenfy.cn/mcp
+   ```
+3. Confirm that ChatGPT discovers the `search_knowledge_base` tool.
+4. Copy the registered connection ID from the browser URL. It starts with `plugin_asdk_app`.
+5. Add an `.app.json` mapping for that ID and point the Codex manifest `apps` field at `./.app.json` before packaging or submitting the Web plugin.
+6. Install the packaged plugin, select **Connect**, and enter the deployment `API_TOKEN` on the Knowbase authorization page.
+
+The connection URL is publisher-controlled. The `API_TOKEN` is never stored in the plugin and is never returned as the OAuth access token.
+
+## 7. Legacy Custom GPT / Mobile Setup
 
 To use in ChatGPT Web or the iOS/Android ChatGPT app:
 1. Go to **ChatGPT > Explore GPTs > Create**.

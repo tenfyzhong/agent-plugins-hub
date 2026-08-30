@@ -1,5 +1,4 @@
 import json
-import subprocess
 import unittest
 from pathlib import Path
 
@@ -171,37 +170,18 @@ class MarketplaceLayoutTest(unittest.TestCase):
             ).is_file()
         )
 
-    def test_knowbase_mcp_starts_from_plugin_root(self):
+    def test_knowbase_uses_remote_mcp_oauth(self):
         plugin_root = REPOSITORY_ROOT / "plugins" / "knowbase"
         mcp_config = json.loads(
             (plugin_root / ".mcp.json").read_text(encoding="utf-8")
         )
         server_config = mcp_config["mcpServers"]["knowbase"]
-        initialize_request = {
-            "jsonrpc": "2.0",
-            "id": 1,
-            "method": "initialize",
-            "params": {
-                "protocolVersion": "2024-11-05",
-                "capabilities": {},
-                "clientInfo": {"name": "test-client", "version": "1.0.0"},
-            },
-        }
-
-        completed = subprocess.run(
-            [server_config["command"], *server_config["args"]],
-            cwd=plugin_root / server_config["cwd"],
-            input=json.dumps(initialize_request) + "\n",
-            capture_output=True,
-            text=True,
-            timeout=5,
-            check=True,
-        )
-        initialize_response = json.loads(completed.stdout)
-
-        self.assertEqual(initialize_response["id"], 1)
         self.assertEqual(
-            initialize_response["result"]["serverInfo"]["name"], "knowbase"
+            server_config,
+            {
+                "type": "http",
+                "url": "https://knowbase-api.tenfy.cn/mcp",
+            },
         )
 
     def test_knowbase_codex_manifest_uses_supported_fields(self):

@@ -32,6 +32,7 @@ Options:
 
 If the `search_knowledge_base` MCP tool is available in your session:
 - Call `search_knowledge_base(query="...", topK=5, source="...")`.
+- If the tool requests authentication, complete the OAuth connection. Enter the deployment `API_TOKEN` only on the Knowbase authorization page; do not place it in chat or plugin configuration.
 
 ### Option 3: Direct API Request
 
