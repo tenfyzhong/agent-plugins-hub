@@ -1,0 +1,27 @@
+{
+  "name": "knowbase",
+  "version": "0.1.0",
+  "description": "Semantic knowledge base search plugin for Cloudflare Vectorize and personal notes from Claude Code.",
+  "author": {
+    "name": "tenfyzhong",
+    "url": "https://github.com/tenfyzhong"
+  },
+  "homepage": "https://knowbase-api.tenfy.cn",
+  "repository": "https://github.com/tenfyzhong/agent-plugins-hub",
+  "license": "MIT",
+  "keywords": [
+    "cloudflare",
+    "vectorize",
+    "knowledge-base",
+    "search",
+    "rag",
+    "obsidian"
+  ],
+  "skills": "./skills/",
+  "mcpServers": {
+    "knowbase": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp.mjs"]
+    }
+  }
+}

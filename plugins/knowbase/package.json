@@ -1,0 +1,24 @@
+{
+  "name": "@tenfyzhong/knowbase",
+  "version": "0.1.0",
+  "description": "Semantic knowledge base search plugin and MCP server for Cloudflare Vectorize.",
+  "license": "MIT",
+  "omp": {
+    "extensions": [
+      "./extensions/knowbase-omp.ts"
+    ],
+    "mcpServers": {
+      "knowbase": {
+        "command": "node",
+        "args": [
+          "${PLUGIN_ROOT}/mcp.mjs"
+        ]
+      }
+    }
+  },
+  "pi": {
+    "extensions": [
+      "./extensions/knowbase.ts"
+    ]
+  }
+}
