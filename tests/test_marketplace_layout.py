@@ -204,6 +204,21 @@ class MarketplaceLayoutTest(unittest.TestCase):
 
         self.assertNotIn("auth", manifest)
 
+    def test_knowbase_is_mcp_only(self):
+        plugin_root = REPOSITORY_ROOT / "plugins" / "knowbase"
+
+        for agent_directory in (".codex-plugin", ".claude-plugin"):
+            manifest = json.loads(
+                (plugin_root / agent_directory / "plugin.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            with self.subTest(agent_directory=agent_directory):
+                self.assertNotIn("skills", manifest)
+                self.assertEqual(manifest["mcpServers"], "./.mcp.json")
+
+        self.assertFalse((plugin_root / "skills").exists())
+
 
 class ClaudeMarketplaceLayoutTest(unittest.TestCase):
     def test_marketplace_entries_follow_repo_layout(self):
@@ -255,7 +270,10 @@ class ClaudeMarketplaceLayoutTest(unittest.TestCase):
                         (plugin_root / skills_path.removeprefix("./")).is_dir()
                     )
                 else:
-                    self.assertTrue((plugin_root / "hooks" / "hooks.json").is_file())
+                    self.assertTrue(
+                        claude_manifest.get("mcpServers")
+                        or (plugin_root / "hooks" / "hooks.json").is_file()
+                    )
 
     def test_lark_router_is_agent_neutral(self):
         router = (

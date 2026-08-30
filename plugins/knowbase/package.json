@@ -1,6 +1,6 @@
 {
   "name": "@tenfyzhong/knowbase",
-  "version": "0.2.0+codex.20260830164611",
+  "version": "0.2.0+codex.20260830165620",
   "description": "Semantic knowledge base search plugin with configurable local and remote MCP connections.",
   "license": "MIT",
   "omp": {

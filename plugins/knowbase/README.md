@@ -1,10 +1,10 @@
 # Knowledge Base Plugin (`knowbase`)
 
-Cross-agent plugin, skill, and MCP server for semantic search over personal notes (Obsidian), documents, code repositories, and articles indexed in Cloudflare Vectorize.
+Cross-agent plugin and MCP server for semantic search over personal notes (Obsidian), documents, code repositories, and articles indexed in Cloudflare Vectorize.
 
 ## Supported Agents
 
-- **Claude Code**: Install as a Plugin (`claude plugin install`), automatically activating the configurable local MCP adapter and skill (`/knowbase:knowbase`).
+- **Claude Code**: Install as a Plugin (`claude plugin install`), automatically activating the configurable local MCP adapter.
 - **OpenAI Codex**: Install as a Plugin (`codex plugin add`) with the configurable local MCP adapter, or connect directly to a deployment's remote OAuth MCP endpoint.
 - **Oh My Pi (OMP)**: Install as a Plugin (`omp plugin install`), automatically loading the native extension and MCP server.
 - **Pi**: Install as an Extension (`pi install`), registering the `search_knowledge_base` native tool into Pi.
@@ -29,7 +29,7 @@ set -gx KNOWBASE_API_URL "https://your-knowbase.example.com"
 set -gx KNOWBASE_API_TOKEN "your-api-token"
 ```
 
-The plugin starts its bundled MCP adapter and loads the skill. It does not contain a default deployment URL. Invoke `/knowbase:knowbase` explicitly or let Claude query the knowledge base during tasks.
+The plugin starts its bundled MCP adapter and exposes the `search_knowledge_base` tool. It does not contain a default deployment URL. Ask Claude to search the knowledge base when needed; a separate skill is not required.
 
 ---
 
