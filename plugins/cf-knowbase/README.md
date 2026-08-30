@@ -1,6 +1,6 @@
 # Cloudflare Knowledge Base Plugin (`cf-knowbase`)
 
-Cross-agent plugin and skill for semantic search over personal notes (Obsidian), documents, code repositories, and articles indexed in Cloudflare Vectorize.
+Cross-agent plugin, skill, and MCP server for semantic search over personal notes (Obsidian), documents, code repositories, and articles indexed in Cloudflare Vectorize.
 
 ## Supported Agents
 
@@ -8,6 +8,7 @@ Cross-agent plugin and skill for semantic search over personal notes (Obsidian),
 - **Claude Code**: Namespaced skill (`/cf-knowbase:cf-knowbase`).
 - **Oh My Pi (OMP)**: Native OMP extension and marketplace plugin.
 - **Pi**: Native Pi tool extension (`search_knowledge_base`) and skill.
+- **Claude Desktop & Cursor**: Direct stdio MCP server (`plugins/cf-knowbase/mcp.mjs`).
 - **ChatGPT (Web & Mobile)**: Custom GPT / Action with OAuth 2.0 authorization and OpenAPI schema.
 
 ---
@@ -23,7 +24,7 @@ codex plugin add cf-knowbase@tenfyzhong-agent-plugins-hub
 ### Authorization & Connection in Codex / ChatGPT
 
 When prompted to connect your knowledge base, you can authorize via OAuth:
-1. Codex / ChatGPT will open the authorization page: `https://<YOUR_WORKER_URL>/oauth/authorize`.
+1. Codex / ChatGPT will open the authorization page: `https://knowbase-api.tenfy.cn/oauth/authorize`.
 2. Enter your `API_TOKEN` and click **Authorize & Connect**.
 3. Codex / ChatGPT receives the access token securely and enables the `searchKnowledgeBase` action.
 
@@ -58,18 +59,36 @@ pi install git:github.com/tenfyzhong/agent-plugins-hub
 
 ---
 
-## 5. Web ChatGPT / Mobile ChatGPT Custom GPT Setup
+## 5. Claude Desktop & Cursor MCP Server
+
+You can connect the MCP server directly using `mcp.mjs`.
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "personal-knowledge-base": {
+      "command": "node",
+      "args": ["/Users/zhongtenghui/go/src/github.com/tenfyzhong/agent-plugins-hub/plugins/cf-knowbase/mcp.mjs"]
+    }
+  }
+}
+```
+
+---
+
+## 6. Web ChatGPT / Mobile ChatGPT Custom GPT Setup
 
 To use in ChatGPT Web or the iOS/Android ChatGPT app:
 1. Go to **ChatGPT > Explore GPTs > Create**.
 2. Go to **Configure > Actions > Create new action**.
 3. In **Schema**, import from URL or paste:
-   `https://<YOUR_WORKER_URL>/openapi.json`
+   `https://knowbase-api.tenfy.cn/openapi.json`
 4. Under **Authentication**, select **OAuth**:
    - **Client ID**: `chatgpt`
    - **Client Secret**: any string (e.g. `secret`)
-   - **Authorization URL**: `https://<YOUR_WORKER_URL>/oauth/authorize`
-   - **Token URL**: `https://<YOUR_WORKER_URL>/oauth/token`
+   - **Authorization URL**: `https://knowbase-api.tenfy.cn/oauth/authorize`
+   - **Token URL**: `https://knowbase-api.tenfy.cn/oauth/token`
    - **Scope**: `read`
    - **Token Exchange Method**: `Default (POST request)`
 5. Save and click **Connect**. A mobile-responsive web page will open where you enter your `API_TOKEN` to authorize.
