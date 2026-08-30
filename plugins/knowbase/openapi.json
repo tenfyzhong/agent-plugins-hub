@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://cf-knowbase-api.workers.dev"
+      "url": "https://knowbase-api.tenfy.cn"
     }
   ],
   "paths": {
@@ -39,7 +39,7 @@
                   },
                   "source": {
                     "type": "string",
-                    "description": "Optional source filter (e.g. 'obsidian-notes', 'blog')."
+                    "description": "Optional source filter (e.g. 'notes', 'blog')."
                   }
                 },
                 "required": [

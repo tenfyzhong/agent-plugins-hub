@@ -53,10 +53,10 @@
       "category": "Productivity"
     },
     {
-      "name": "cf-knowbase",
+      "name": "knowbase",
       "source": {
         "source": "local",
-        "path": "./plugins/cf-knowbase"
+        "path": "./plugins/knowbase"
       },
       "policy": {
         "installation": "AVAILABLE",

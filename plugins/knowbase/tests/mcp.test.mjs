@@ -39,7 +39,7 @@ test("MCP JSON-RPC handles initialize and tools/list", async () => {
   });
 
   assert.equal(initRes.id, 1);
-  assert.equal(initRes.result.serverInfo.name, "cf-knowbase");
+  assert.equal(initRes.result.serverInfo.name, "knowbase");
   assert.ok(initRes.result.capabilities.tools);
 
   const toolsRes = await handleJsonRpcMessage({

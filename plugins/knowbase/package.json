@@ -1,14 +1,14 @@
 {
-  "name": "@tenfyzhong/cf-knowbase",
+  "name": "@tenfyzhong/knowbase",
   "version": "0.1.0",
   "description": "Semantic knowledge base search plugin and MCP server for Cloudflare Vectorize.",
   "license": "MIT",
   "omp": {
     "extensions": [
-      "./extensions/cf-knowbase-omp.ts"
+      "./extensions/knowbase-omp.ts"
     ],
     "mcpServers": {
-      "cf-knowbase": {
+      "knowbase": {
         "command": "node",
         "args": [
           "${PLUGIN_ROOT}/mcp.mjs"
@@ -18,7 +18,7 @@
   },
   "pi": {
     "extensions": [
-      "./extensions/cf-knowbase.ts"
+      "./extensions/knowbase.ts"
     ]
   }
 }

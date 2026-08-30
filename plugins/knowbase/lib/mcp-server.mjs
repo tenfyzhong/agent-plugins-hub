@@ -18,7 +18,7 @@ export const TOOLS = [
         },
         source: {
           type: "string",
-          description: "Optional source filter to restrict search (e.g. 'obsidian-notes', 'blog', 'tidb-docs')."
+          description: "Optional source filter to restrict search (e.g. 'notes', 'blog', 'docs')."
         }
       },
       required: ["query"]
@@ -52,7 +52,7 @@ export async function handleJsonRpcMessage(message) {
           tools: {}
         },
         serverInfo: {
-          name: "cf-knowbase",
+          name: "knowbase",
           version: "0.1.0"
         }
       }

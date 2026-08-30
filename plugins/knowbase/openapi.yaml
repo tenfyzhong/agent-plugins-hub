@@ -4,7 +4,7 @@ info:
   description: Semantic search API powered by Cloudflare Workers AI and Vectorize.
   version: 0.1.0
 servers:
-  - url: https://cf-knowbase-api.workers.dev
+  - url: https://knowbase-api.tenfy.cn
 paths:
   /search:
     post:
@@ -29,7 +29,7 @@ paths:
                   description: Maximum number of search results to return.
                 source:
                   type: string
-                  description: Optional source filter (e.g. 'obsidian-notes', 'blog').
+                  description: Optional source filter (e.g. 'notes', 'blog').
               required:
                 - query
       responses:

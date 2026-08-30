@@ -41,7 +41,7 @@ export async function executeKnowbaseSearch(
   }
 }
 
-export function registerCloudflareKb(pi: ExtensionAPI): void {
+export function registerKnowbase(pi: ExtensionAPI): void {
   pi.on("tool_call", async (event: unknown) => {
     const ev = event as { toolName?: string; input?: { query?: string; topK?: number; source?: string } };
     if (ev?.toolName !== "search_knowledge_base") return undefined;
@@ -60,4 +60,4 @@ export function registerCloudflareKb(pi: ExtensionAPI): void {
   });
 }
 
-export default registerCloudflareKb;
+export default registerKnowbase;

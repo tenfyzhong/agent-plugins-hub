@@ -147,26 +147,26 @@ class MarketplaceLayoutTest(unittest.TestCase):
                 / "agent-notifier-omp.ts"
             ).is_file()
         )
-    def test_cf_knowbase_uses_native_omp_plugin_manifest(self):
+    def test_knowbase_uses_native_omp_plugin_manifest(self):
         repository_package = json.loads(
             (REPOSITORY_ROOT / "package.json").read_text(encoding="utf-8")
         )
         plugin_package = json.loads(
             (
-                REPOSITORY_ROOT / "plugins" / "cf-knowbase" / "package.json"
+                REPOSITORY_ROOT / "plugins" / "knowbase" / "package.json"
             ).read_text(encoding="utf-8")
         )
 
-        plugin_entry = "./extensions/cf-knowbase-omp.ts"
+        plugin_entry = "./extensions/knowbase-omp.ts"
         self.assertNotIn("omp", repository_package)
         self.assertEqual(plugin_package["omp"]["extensions"], [plugin_entry])
         self.assertTrue(
             (
                 REPOSITORY_ROOT
                 / "plugins"
-                / "cf-knowbase"
+                / "knowbase"
                 / "extensions"
-                / "cf-knowbase-omp.ts"
+                / "knowbase-omp.ts"
             ).is_file()
         )
 

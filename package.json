@@ -16,12 +16,12 @@
     "extensions": [
       "./plugins/agent-guard/extensions/agent-guard.ts",
       "./plugins/agent-notifier/extensions/agent-notifier.ts",
-      "./plugins/cf-knowbase/extensions/cf-knowbase.ts"
+      "./plugins/knowbase/extensions/knowbase.ts"
     ],
     "skills": [
       "./plugins/lark-cli-skills/skills",
       "./plugins/obsidian-skills/skills",
-      "./plugins/cf-knowbase/skills"
+      "./plugins/knowbase/skills"
     ]
   }
 }
