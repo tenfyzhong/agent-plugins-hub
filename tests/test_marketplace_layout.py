@@ -184,7 +184,7 @@ class MarketplaceLayoutTest(unittest.TestCase):
                 "cwd": ".",
                 "env_vars": [
                     "KNOWBASE_API_URL",
-                    "KNOWBASE_API_TOKEN",
+                    "KNOWBASE_ACCESS_TOKEN",
                     "KNOWBASE_CONFIG_PATH",
                 ],
             },
@@ -218,6 +218,9 @@ class MarketplaceLayoutTest(unittest.TestCase):
                 self.assertEqual(manifest["mcpServers"], "./.mcp.json")
 
         self.assertFalse((plugin_root / "skills").exists())
+        self.assertFalse(
+            (plugin_root / ".well-known" / "ai-plugin.json").exists()
+        )
 
 
 class ClaudeMarketplaceLayoutTest(unittest.TestCase):

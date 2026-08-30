@@ -6,7 +6,7 @@
       "cwd": ".",
       "env_vars": [
         "KNOWBASE_API_URL",
-        "KNOWBASE_API_TOKEN",
+        "KNOWBASE_ACCESS_TOKEN",
         "KNOWBASE_CONFIG_PATH"
       ]
     }

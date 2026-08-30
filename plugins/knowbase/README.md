@@ -22,14 +22,14 @@ claude plugin marketplace add tenfyzhong/agent-plugins-hub
 claude plugin install knowbase@tenfyzhong-agent-plugins-hub
 ```
 
-Configure the deployment URL and API token before starting Claude Code:
+Configure the deployment URL and an OAuth-issued access token before starting Claude Code:
 
 ```fish
 set -gx KNOWBASE_API_URL "https://your-knowbase.example.com"
-set -gx KNOWBASE_API_TOKEN "your-api-token"
+set -gx KNOWBASE_ACCESS_TOKEN "your-oauth-access-token"
 ```
 
-The plugin starts its bundled MCP adapter and exposes the `search_knowledge_base` tool. It does not contain a default deployment URL. Ask Claude to search the knowledge base when needed; a separate skill is not required.
+The plugin starts its bundled MCP adapter and exposes the `search_knowledge_base` tool. It does not contain a default deployment URL and does not accept the deployment `API_TOKEN` as a search credential. Ask Claude to search the knowledge base when needed; a separate skill is not required.
 
 ---
 
@@ -41,32 +41,33 @@ codex plugin marketplace add tenfyzhong/agent-plugins-hub
 codex plugin add knowbase@tenfyzhong-agent-plugins-hub
 ```
 
-Configure the deployment URL and API token outside the plugin:
+For OAuth login with automatic access-token refresh, connect Codex directly to the deployment:
 
 ```fish
 set -gx KNOWBASE_API_URL "https://your-knowbase.example.com"
-set -gx KNOWBASE_API_TOKEN "your-api-token"
-```
-
-Alternatively, create `~/.config/knowbase/config.json`:
-
-```json
-{
-  "apiUrl": "https://your-knowbase.example.com",
-  "apiToken": "your-api-token"
-}
-```
-
-The plugin contains no default deployment URL. Restart Codex after changing the environment or configuration file.
-
-To use the deployment's remote OAuth MCP endpoint instead of the bundled adapter, add it separately and authenticate:
-
-```fish
 codex mcp add knowbase-remote --url "$KNOWBASE_API_URL/mcp"
 codex mcp login knowbase-remote
 ```
 
-The authorization page asks for the deployment `API_TOKEN`; Codex receives only the issued OAuth tokens.
+Codex opens the deployment authorization page, completes the OAuth authorization-code flow, and stores only the issued OAuth access and refresh tokens. The deployment `API_TOKEN` is never accepted directly by the search or MCP endpoints.
+
+To use the bundled stdio adapter with an access token issued by an OAuth client, set:
+
+```fish
+set -gx KNOWBASE_API_URL "https://your-knowbase.example.com"
+set -gx KNOWBASE_ACCESS_TOKEN "your-oauth-access-token"
+```
+
+Alternatively, create `~/.config/knowbase/config.json` with the OAuth access token:
+
+```json
+{
+  "apiUrl": "https://your-knowbase.example.com",
+  "accessToken": "your-oauth-access-token"
+}
+```
+
+The plugin contains no default deployment URL. Restart Codex after changing the environment or configuration file. Because access tokens are short-lived, direct remote OAuth is preferred when the client supports it.
 
 ---
 
@@ -130,7 +131,7 @@ The backend must be deployed before registering the connection.
 5. Add an `.app.json` mapping for that ID and point the Codex manifest `apps` field at `./.app.json` before packaging or submitting the Web plugin.
 6. Install the packaged plugin, select **Connect**, and enter the deployment `API_TOKEN` on the Knowbase authorization page.
 
-The connection URL is publisher-controlled. The `API_TOKEN` is never stored in the plugin and is never returned as the OAuth access token.
+The connection URL is publisher-controlled. The deployment `API_TOKEN` is accepted only by the authorization page to approve the OAuth grant; it is never accepted by the search or MCP endpoints, stored in the plugin, or returned as the OAuth access token.
 
 ## 7. Legacy Custom GPT / Mobile Setup
 

@@ -4,12 +4,12 @@ import path from "node:path";
 
 export function loadConfig() {
   const envUrl = process.env.KNOWBASE_API_URL;
-  const envToken = process.env.KNOWBASE_API_TOKEN;
+  const envToken = process.env.KNOWBASE_ACCESS_TOKEN;
 
   if (envUrl && envToken) {
     return {
       apiUrl: envUrl.trim().replace(/\/+$/, "").replace(/\/search$/, ""),
-      apiToken: envToken.trim()
+      accessToken: envToken.trim()
     };
   }
 
@@ -21,10 +21,10 @@ export function loadConfig() {
     try {
       const content = fs.readFileSync(configPath, "utf-8");
       const parsed = JSON.parse(content);
-      if (parsed.apiUrl && parsed.apiToken) {
+      if (parsed.apiUrl && parsed.accessToken) {
         return {
           apiUrl: parsed.apiUrl.trim().replace(/\/+$/, "").replace(/\/search$/, ""),
-          apiToken: parsed.apiToken.trim()
+          accessToken: parsed.accessToken.trim()
         };
       }
     } catch {
@@ -66,7 +66,7 @@ export async function searchKnowledgeBase(options) {
   const config = loadConfig();
   if (!config) {
     throw new Error(
-      "Knowledge Base credentials not found. Please create '~/.config/knowbase/config.json' or set KNOWBASE_API_URL and KNOWBASE_API_TOKEN environment variables."
+      "Knowledge Base OAuth credentials not found. Please create '~/.config/knowbase/config.json' or set KNOWBASE_API_URL and KNOWBASE_ACCESS_TOKEN environment variables."
     );
   }
 
@@ -75,7 +75,7 @@ export async function searchKnowledgeBase(options) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${config.apiToken}`,
+      Authorization: `Bearer ${config.accessToken}`,
       "User-Agent": "Knowbase-MCP/1.0"
     },
     body: JSON.stringify({

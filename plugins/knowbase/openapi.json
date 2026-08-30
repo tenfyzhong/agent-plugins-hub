@@ -114,7 +114,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized: Missing or invalid API token"
+            "description": "Unauthorized: Missing or invalid OAuth access token"
           },
           "400": {
             "description": "Bad Request: Invalid query format"

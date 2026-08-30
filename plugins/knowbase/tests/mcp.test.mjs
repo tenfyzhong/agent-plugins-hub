@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { formatResults } from "../lib/search.mjs";
+import { formatResults, loadConfig } from "../lib/search.mjs";
 import { handleJsonRpcMessage } from "../lib/mcp-server.mjs";
 
 test("searchKnowledgeBase formats results properly", () => {
@@ -52,4 +52,37 @@ test("MCP JSON-RPC handles initialize and tools/list", async () => {
   assert.equal(toolsRes.id, 2);
   assert.equal(toolsRes.result.tools.length, 1);
   assert.equal(toolsRes.result.tools[0].name, "search_knowledge_base");
+});
+
+test("loadConfig accepts OAuth access tokens and ignores API tokens", () => {
+  const keys = [
+    "KNOWBASE_API_URL",
+    "KNOWBASE_ACCESS_TOKEN",
+    "KNOWBASE_API_TOKEN",
+    "KNOWBASE_CONFIG_PATH"
+  ];
+  const previous = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
+
+  try {
+    process.env.KNOWBASE_API_URL = "https://knowbase.example.com/search";
+    process.env.KNOWBASE_API_TOKEN = "deployment-api-token";
+    process.env.KNOWBASE_CONFIG_PATH = "/path/that/does/not/exist.json";
+    delete process.env.KNOWBASE_ACCESS_TOKEN;
+
+    assert.equal(loadConfig(), null);
+
+    process.env.KNOWBASE_ACCESS_TOKEN = "oauth-access-token";
+    assert.deepEqual(loadConfig(), {
+      apiUrl: "https://knowbase.example.com",
+      accessToken: "oauth-access-token"
+    });
+  } finally {
+    for (const key of keys) {
+      if (previous[key] === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = previous[key];
+      }
+    }
+  }
 });

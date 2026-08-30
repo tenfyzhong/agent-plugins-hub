@@ -1,6 +1,6 @@
 {
   "name": "knowbase",
-  "version": "0.2.0+codex.20260830165620",
+  "version": "0.2.0+codex.20260830170621",
   "description": "Configurable knowledge base search plugin for Cloudflare Vectorize and personal notes.",
   "author": {
     "name": "tenfyzhong",
