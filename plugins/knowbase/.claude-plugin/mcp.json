@@ -1,8 +1,6 @@
 {
-  "mcpServers": {
-    "knowbase": {
-      "command": "node",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp.mjs"]
-    }
+  "knowbase": {
+    "command": "node",
+    "args": ["./mcp.mjs"]
   }
 }

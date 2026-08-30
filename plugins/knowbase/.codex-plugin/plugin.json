@@ -18,12 +18,7 @@
     "obsidian"
   ],
   "skills": "./skills/",
-  "mcpServers": {
-    "knowbase": {
-      "command": "node",
-      "args": ["${PLUGIN_ROOT}/mcp.mjs"]
-    }
-  },
+  "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Cloudflare Knowledge Base",
     "shortDescription": "Search personal notes, docs, and knowledge base.",
