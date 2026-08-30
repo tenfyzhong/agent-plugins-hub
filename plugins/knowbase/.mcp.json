@@ -1,6 +1,9 @@
 {
-  "knowbase": {
-    "command": "node",
-    "args": ["./mcp.mjs"]
+  "mcpServers": {
+    "knowbase": {
+      "command": "node",
+      "args": ["./mcp.mjs"],
+      "cwd": "."
+    }
   }
 }
