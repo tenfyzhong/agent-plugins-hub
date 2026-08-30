@@ -35,10 +35,5 @@
       "Look up recent articles in my knowledge base.",
       "Search my notes for database configuration."
     ]
-  },
-  "auth": {
-    "type": "oauth",
-    "authorizationUrl": "/oauth/authorize",
-    "tokenUrl": "/oauth/token"
   }
 }

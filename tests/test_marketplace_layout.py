@@ -204,6 +204,19 @@ class MarketplaceLayoutTest(unittest.TestCase):
             initialize_response["result"]["serverInfo"]["name"], "knowbase"
         )
 
+    def test_knowbase_codex_manifest_uses_supported_fields(self):
+        manifest = json.loads(
+            (
+                REPOSITORY_ROOT
+                / "plugins"
+                / "knowbase"
+                / ".codex-plugin"
+                / "plugin.json"
+            ).read_text(encoding="utf-8")
+        )
+
+        self.assertNotIn("auth", manifest)
+
 
 class ClaudeMarketplaceLayoutTest(unittest.TestCase):
     def test_marketplace_entries_follow_repo_layout(self):
