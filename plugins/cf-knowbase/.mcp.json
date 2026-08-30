@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "cf-knowbase": {
+      "command": "node",
+      "args": ["${PLUGIN_ROOT}/mcp.mjs"]
+    }
+  }
+}

@@ -18,6 +18,12 @@
     "obsidian"
   ],
   "skills": "./skills/",
+  "mcpServers": {
+    "cf-knowbase": {
+      "command": "node",
+      "args": ["${PLUGIN_ROOT}/mcp.mjs"]
+    }
+  },
   "interface": {
     "displayName": "Cloudflare Knowledge Base",
     "shortDescription": "Search personal notes, docs, and knowledge base.",

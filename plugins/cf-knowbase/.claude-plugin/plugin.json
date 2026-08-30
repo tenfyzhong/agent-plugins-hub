@@ -17,5 +17,11 @@
     "rag",
     "obsidian"
   ],
-  "skills": "./skills/"
+  "skills": "./skills/",
+  "mcpServers": {
+    "cf-knowbase": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp.mjs"]
+    }
+  }
 }
