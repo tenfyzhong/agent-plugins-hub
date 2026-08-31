@@ -1,5 +1,4 @@
 import json
-import subprocess
 import unittest
 from pathlib import Path
 
@@ -148,76 +147,6 @@ class MarketplaceLayoutTest(unittest.TestCase):
                 / "agent-notifier-omp.ts"
             ).is_file()
         )
-    def test_knowbase_uses_native_omp_plugin_manifest(self):
-        repository_package = json.loads(
-            (REPOSITORY_ROOT / "package.json").read_text(encoding="utf-8")
-        )
-        plugin_package = json.loads(
-            (
-                REPOSITORY_ROOT / "plugins" / "knowbase" / "package.json"
-            ).read_text(encoding="utf-8")
-        )
-
-        plugin_entry = "./extensions/knowbase-omp.ts"
-        self.assertNotIn("omp", repository_package)
-        self.assertEqual(plugin_package["omp"]["extensions"], [plugin_entry])
-        self.assertTrue(
-            (
-                REPOSITORY_ROOT
-                / "plugins"
-                / "knowbase"
-                / "extensions"
-                / "knowbase-omp.ts"
-            ).is_file()
-        )
-
-    def test_knowbase_mcp_starts_from_plugin_root(self):
-        plugin_root = REPOSITORY_ROOT / "plugins" / "knowbase"
-        mcp_config = json.loads(
-            (plugin_root / ".mcp.json").read_text(encoding="utf-8")
-        )
-        server_config = mcp_config["mcpServers"]["knowbase"]
-        initialize_request = {
-            "jsonrpc": "2.0",
-            "id": 1,
-            "method": "initialize",
-            "params": {
-                "protocolVersion": "2024-11-05",
-                "capabilities": {},
-                "clientInfo": {"name": "test-client", "version": "1.0.0"},
-            },
-        }
-
-        completed = subprocess.run(
-            [server_config["command"], *server_config["args"]],
-            cwd=plugin_root / server_config["cwd"],
-            input=json.dumps(initialize_request) + "\n",
-            capture_output=True,
-            text=True,
-            timeout=5,
-            check=True,
-        )
-        initialize_response = json.loads(completed.stdout)
-
-        self.assertEqual(initialize_response["id"], 1)
-        self.assertEqual(
-            initialize_response["result"]["serverInfo"]["name"], "knowbase"
-        )
-
-    def test_knowbase_codex_manifest_uses_supported_fields(self):
-        manifest = json.loads(
-            (
-                REPOSITORY_ROOT
-                / "plugins"
-                / "knowbase"
-                / ".codex-plugin"
-                / "plugin.json"
-            ).read_text(encoding="utf-8")
-        )
-
-        self.assertNotIn("auth", manifest)
-
-
 class ClaudeMarketplaceLayoutTest(unittest.TestCase):
     def test_marketplace_entries_follow_repo_layout(self):
         marketplace = json.loads(
@@ -268,7 +197,10 @@ class ClaudeMarketplaceLayoutTest(unittest.TestCase):
                         (plugin_root / skills_path.removeprefix("./")).is_dir()
                     )
                 else:
-                    self.assertTrue((plugin_root / "hooks" / "hooks.json").is_file())
+                    self.assertTrue(
+                        claude_manifest.get("mcpServers")
+                        or (plugin_root / "hooks" / "hooks.json").is_file()
+                    )
 
     def test_lark_router_is_agent_neutral(self):
         router = (

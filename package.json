@@ -7,21 +7,17 @@
     "pi-package",
     "lark",
     "feishu",
-    "obsidian",
-    "cloudflare",
-    "knowledge-base"
+    "obsidian"
   ],
   "license": "MIT",
   "pi": {
     "extensions": [
       "./plugins/agent-guard/extensions/agent-guard.ts",
-      "./plugins/agent-notifier/extensions/agent-notifier.ts",
-      "./plugins/knowbase/extensions/knowbase.ts"
+      "./plugins/agent-notifier/extensions/agent-notifier.ts"
     ],
     "skills": [
       "./plugins/lark-cli-skills/skills",
-      "./plugins/obsidian-skills/skills",
-      "./plugins/knowbase/skills"
+      "./plugins/obsidian-skills/skills"
     ]
   }
 }
