@@ -14,8 +14,7 @@ native package metadata alongside shared Agent Skills.
 ├── plugins/
 │   ├── agent-guard/                      # Cross-agent destructive-command guard
 │   ├── agent-notifier/                   # Webhook and Telegram completion notifier
-│   ├── knowbase/                         # Semantic search over personal knowledge base
-│   └── lark-cli-skills/
+│   ├── lark-cli-skills/
 │       ├── .claude-plugin/plugin.json  # Claude Code plugin manifest
 │       ├── .codex-plugin/plugin.json   # Codex plugin manifest
 │       ├── skills/lark/                # Registered lazy router skill
@@ -40,8 +39,8 @@ paths from the marketplace repository root, not from the nested
 
 ## Continuous integration
 
-GitHub Actions runs the repository validation suite and Knowbase MCP tests for
-every pull request and every push to `main`.
+GitHub Actions runs the repository validation suite for every pull request and
+every push to `main`.
 
 ## Install with Codex
 
@@ -64,7 +63,7 @@ codex plugin add lark-cli-skills@tenfyzhong-agent-plugins-hub
 codex plugin add obsidian-skills@tenfyzhong-agent-plugins-hub
 codex plugin add agent-guard@tenfyzhong-agent-plugins-hub
 codex plugin add agent-notifier@tenfyzhong-agent-plugins-hub
-codex plugin add knowbase@tenfyzhong-agent-plugins-hub
+```
 
 ## Install with Claude Code
 
@@ -87,7 +86,7 @@ claude plugin install lark-cli-skills@tenfyzhong-agent-plugins-hub
 claude plugin install obsidian-skills@tenfyzhong-agent-plugins-hub
 claude plugin install agent-guard@tenfyzhong-agent-plugins-hub
 claude plugin install agent-notifier@tenfyzhong-agent-plugins-hub
-claude plugin install knowbase@tenfyzhong-agent-plugins-hub
+```
 
 Claude Code namespaces plugin skills. Invoke the router explicitly with
 `/lark-cli-skills:lark`, or let Claude select it from the request context.
@@ -112,13 +111,13 @@ or let Pi select it from the request context.
 
 ## Install with Oh My Pi
 
-Add this repository as an OMP marketplace and install Agent Guard as a plugin:
+Add this repository as an OMP marketplace and install the required plugins:
 
 ```bash
 omp plugin marketplace add tenfyzhong/agent-plugins-hub
 omp plugin install agent-guard@tenfyzhong-agent-plugins-hub
 omp plugin install agent-notifier@tenfyzhong-agent-plugins-hub
-omp plugin install knowbase@tenfyzhong-agent-plugins-hub
+```
 
 ## Agent Guard
 
@@ -137,16 +136,6 @@ a Pi extension. See
 [`plugins/agent-notifier/README.md`](plugins/agent-notifier/README.md)
 for webhook and Telegram configuration.
 
-## Knowledge Base
-
-The `knowbase` plugin connects AI agents to your personal knowledge base
-indexed in Cloudflare Vectorize. Its bundled MCP adapter requires an explicit
-deployment URL and OAuth access token, so the same plugin can target different
-deployments. ChatGPT Web and direct remote clients can use the deployment's
-OAuth-authenticated MCP endpoint. The plugin also retains native Pi/Oh My Pi
-integrations and the legacy Custom GPT Action. See
-[`plugins/knowbase/README.md`](plugins/knowbase/README.md) for full
-configuration and deployment instructions.
 ## Lark CLI Skills
 
 The `lark-cli-skills` plugin mirrors every skill under

@@ -1,6 +1,0 @@
-{
-  "knowbase": {
-    "command": "node",
-    "args": ["./mcp.mjs"]
-  }
-}
