@@ -38,6 +38,11 @@ Marketplace entries use `./plugins/<plugin-name>` paths. Codex resolves these
 paths from the marketplace repository root, not from the nested
 `.agents/plugins/` directory.
 
+## Continuous integration
+
+GitHub Actions runs the repository validation suite and Knowbase MCP tests for
+every pull request and every push to `main`.
+
 ## Install with Codex
 
 Add the GitHub repository as a marketplace:

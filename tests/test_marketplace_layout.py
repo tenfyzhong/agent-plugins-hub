@@ -206,6 +206,9 @@ class MarketplaceLayoutTest(unittest.TestCase):
 
     def test_knowbase_is_mcp_only(self):
         plugin_root = REPOSITORY_ROOT / "plugins" / "knowbase"
+        repository_package = json.loads(
+            (REPOSITORY_ROOT / "package.json").read_text(encoding="utf-8")
+        )
 
         for agent_directory in (".codex-plugin", ".claude-plugin"):
             manifest = json.loads(
@@ -220,6 +223,11 @@ class MarketplaceLayoutTest(unittest.TestCase):
         self.assertFalse((plugin_root / "skills").exists())
         self.assertFalse(
             (plugin_root / ".well-known" / "ai-plugin.json").exists()
+        )
+        self.assertFalse((plugin_root / "openapi.json").exists())
+        self.assertFalse((plugin_root / "openapi.yaml").exists())
+        self.assertNotIn(
+            "./plugins/knowbase/skills", repository_package["pi"]["skills"]
         )
 
 
