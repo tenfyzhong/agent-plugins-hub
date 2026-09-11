@@ -184,6 +184,11 @@ The router activates for Obsidian requests and work in an Obsidian vault, then
 loads only the selected workflow. Each snapshot records its source commit in
 `plugins/obsidian-skills/.upstream-revision`.
 
+Routing uses the discovered skill metadata rather than a fixed list, so newly
+synchronized workflows remain discoverable. Knap requests cover Markdown
+template rendering and batch note generation from JSON or CSV; web extraction
+followed by template rendering uses Defuddle together with Knap.
+
 ### Upstream synchronization
 
 The `Sync Obsidian skills` GitHub Actions workflow checks the upstream `main`
