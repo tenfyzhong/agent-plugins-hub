@@ -125,12 +125,6 @@ omp install omp-conventions@tenfyzhong-agent-plugins-hub
 The `omp-conventions` entry becomes available after the change is merged into
 the default branch.
 
-It renames only complete opening and closing `system-conventions` and
-`system_conventions` XML tags to `conventions` in Cloud Code Assist system
-instructions, preserving plain-text names and the block contents.
-See [`plugins/omp-conventions/README.md`](plugins/omp-conventions/README.md)
-for catalog refresh, project scope, updates, and validation instructions.
-
 ## Agent Guard
 
 The `agent-guard` plugin blocks known destructive shell commands before they
@@ -147,6 +141,15 @@ Telegram chat. It uses native hooks for Codex, Claude Code, and Oh My Pi, plus
 a Pi extension. See
 [`plugins/agent-notifier/README.md`](plugins/agent-notifier/README.md)
 for webhook and Telegram configuration.
+
+## OMP Conventions
+
+The `omp-conventions` plugin renames complete opening and closing
+`system-conventions` and `system_conventions` XML tags to `conventions` in
+Cloud Code Assist system instructions, preserving plain-text names and block
+contents. It uses an Oh My Pi extension and applies only to Oh My Pi. See
+[`plugins/omp-conventions/README.md`](plugins/omp-conventions/README.md)
+for installation, updates, and validation instructions.
 
 ## Lark CLI Skills
 
