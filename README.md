@@ -14,6 +14,7 @@ native package metadata alongside shared Agent Skills.
 ├── plugins/
 │   ├── agent-guard/                      # Cross-agent destructive-command guard
 │   ├── agent-notifier/                   # Webhook and Telegram completion notifier
+│   ├── omp-conventions/                  # OMP-only system conventions naming workaround
 │   ├── lark-cli-skills/
 │       ├── .claude-plugin/plugin.json  # Claude Code plugin manifest
 │       ├── .codex-plugin/plugin.json   # Codex plugin manifest
@@ -118,6 +119,18 @@ omp plugin marketplace add tenfyzhong/agent-plugins-hub
 omp plugin install agent-guard@tenfyzhong-agent-plugins-hub
 omp plugin install agent-notifier@tenfyzhong-agent-plugins-hub
 ```
+
+The OMP-only `omp-conventions` extension is installed separately from a local
+checkout:
+
+```bash
+omp plugin link ./plugins/omp-conventions
+```
+
+It renames `system-conventions` and `system_conventions` to `conventions` in
+Cloud Code Assist system instructions while preserving the block contents.
+See [`plugins/omp-conventions/README.md`](plugins/omp-conventions/README.md)
+for scope, single-invocation loading, and validation instructions.
 
 ## Agent Guard
 

@@ -1,0 +1,13 @@
+{
+  "name": "omp-conventions",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Oh My Pi system conventions naming workaround for Cloud Code Assist requests.",
+  "license": "MIT",
+  "omp": {
+    "extensions": [
+      "./extensions/omp-conventions.ts"
+    ]
+  }
+}
