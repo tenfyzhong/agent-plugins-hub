@@ -119,16 +119,11 @@ Add this repository as an OMP marketplace and install the required plugins:
 omp plugin marketplace add tenfyzhong/agent-plugins-hub
 omp plugin install agent-guard@tenfyzhong-agent-plugins-hub
 omp plugin install agent-notifier@tenfyzhong-agent-plugins-hub
-```
-
-Install the OMP-only `omp-conventions` extension from the GitHub marketplace:
-
-```bash
-omp plugin marketplace add https://github.com/tenfyzhong/agent-plugins-hub
 omp install omp-conventions@tenfyzhong-agent-plugins-hub
 ```
 
-This entry becomes available after the change is merged into the default branch.
+The `omp-conventions` entry becomes available after the change is merged into
+the default branch.
 
 It renames only complete opening and closing `system-conventions` and
 `system_conventions` XML tags to `conventions` in Cloud Code Assist system
