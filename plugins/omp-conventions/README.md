@@ -31,26 +31,24 @@ request or that every HTTP 429 error will be resolved.
 
 ## Install in Oh My Pi
 
-From a local checkout of this repository:
+Download the standalone extension directly from GitHub into the default OMP
+profile's extension directory:
 
 ```bash
-omp plugin link ./plugins/omp-conventions
+mkdir -p ~/.omp/agent/extensions
+curl -fL \
+  https://raw.githubusercontent.com/tenfyzhong/agent-plugins-hub/601e2e04a5a5e544a76a42515f11f04ebdeded8e/plugins/omp-conventions/extensions/omp-conventions.ts \
+  -o ~/.omp/agent/extensions/omp-conventions.ts
 ```
 
-Restart OMP after linking. Keep the checkout at the linked location. To enable
-it only for the current project, copy the standalone extension into that
-project's native OMP extension directory instead:
+Restart OMP to load the extension. No repository checkout or package linking is
+required. The URL pins the tested revision and works before this PR is merged.
+To update later, use the desired newer commit in the URL and run the command
+again.
 
-```bash
-mkdir -p .omp/extensions
-cp /absolute/path/to/agent-plugins-hub/plugins/omp-conventions/extensions/omp-conventions.ts .omp/extensions/
-```
-
-For a single OMP invocation, load the extension directly instead:
-
-```bash
-omp --extension ./plugins/omp-conventions/extensions/omp-conventions.ts
-```
+For a named OMP profile, use `~/.omp/profiles/<name>/agent/extensions/` as the
+destination instead. For a project-only installation, download the same GitHub
+URL into `<project>/.omp/extensions/omp-conventions.ts`.
 
 The plugin declares only `omp.extensions`. It has no Pi extension registration,
 Codex or Claude Code manifest, or shared marketplace entry, so installing this

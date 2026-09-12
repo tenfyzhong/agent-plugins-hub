@@ -120,18 +120,20 @@ omp plugin install agent-guard@tenfyzhong-agent-plugins-hub
 omp plugin install agent-notifier@tenfyzhong-agent-plugins-hub
 ```
 
-The OMP-only `omp-conventions` extension is installed separately from a local
-checkout:
+Install the OMP-only `omp-conventions` extension directly from GitHub:
 
 ```bash
-omp plugin link ./plugins/omp-conventions
+mkdir -p ~/.omp/agent/extensions
+curl -fL \
+  https://raw.githubusercontent.com/tenfyzhong/agent-plugins-hub/601e2e04a5a5e544a76a42515f11f04ebdeded8e/plugins/omp-conventions/extensions/omp-conventions.ts \
+  -o ~/.omp/agent/extensions/omp-conventions.ts
 ```
 
 It renames only complete opening and closing `system-conventions` and
 `system_conventions` XML tags to `conventions` in Cloud Code Assist system
 instructions, preserving plain-text names and the block contents.
 See [`plugins/omp-conventions/README.md`](plugins/omp-conventions/README.md)
-for scope, single-invocation loading, and validation instructions.
+for restart, profile and project scope, updates, and validation instructions.
 
 ## Agent Guard
 
