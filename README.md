@@ -122,9 +122,6 @@ omp plugin install agent-notifier@tenfyzhong-agent-plugins-hub
 omp install omp-conventions@tenfyzhong-agent-plugins-hub
 ```
 
-The `omp-conventions` entry becomes available after the change is merged into
-the default branch.
-
 ## Agent Guard
 
 The `agent-guard` plugin blocks known destructive shell commands before they
