@@ -4,8 +4,9 @@ An Oh My Pi extension implementing the name-replacement workaround discussed in
 [oh-my-pi#11794](https://github.com/can1357/oh-my-pi/issues/11794).
 It preserves the conventions block and its instructions.
 
-Before each provider request, it replaces every occurrence of
-`system-conventions` and `system_conventions` with `conventions` in
+Before each provider request, it renames only the complete XML tags
+`<system-conventions>`, `</system-conventions>`, `<system_conventions>`, and
+`</system_conventions>` to `<conventions>` or `</conventions>` in
 `payload.request.systemInstruction.parts[].text`. For example:
 
 ```xml
@@ -18,8 +19,9 @@ becomes:
 <conventions>Keep these instructions.</conventions>
 ```
 
-Both opening and closing tags, as well as plain-text references to the two
-names, are renamed. User messages, tool definitions, non-text parts, and all
+Plain-text references to the two names, including those inside the conventions
+block, are preserved. Incomplete tags and longer tag names are not matched.
+User messages, tool definitions, non-text parts, and all
 other request fields are preserved. Requests without this Cloud Code Assist
 system-instruction shape are ignored. Matching is case-sensitive and repeated
 processing is idempotent.
@@ -64,6 +66,7 @@ python3 -m unittest tests.test_omp_conventions
 python3 -m unittest discover -s tests
 ```
 
-Tests cover both spellings, all system text parts, preserved instructions and
-unrelated fields, malformed payloads, idempotence, and OMP-only registration.
+Tests cover both tag spellings, all system text parts, preserved body text,
+incomplete and similar tags, unrelated fields, malformed payloads, idempotence,
+and OMP-only registration.
 They do not make live provider requests.

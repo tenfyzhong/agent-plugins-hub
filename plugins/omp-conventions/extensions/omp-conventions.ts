@@ -17,7 +17,7 @@ export default function ompConventions(omp: ExtensionAPI) {
         for (const value of parts) {
             const part = asRecord(value);
             if (typeof part?.text !== "string") continue;
-            const text = part.text.replace(/system[-_]conventions/g, "conventions");
+            const text = part.text.replace(/<(\/?)system[-_]conventions>/g, "<$1conventions>");
             if (text !== part.text) {
                 part.text = text;
                 changed = true;

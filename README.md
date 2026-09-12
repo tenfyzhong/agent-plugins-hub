@@ -127,8 +127,9 @@ checkout:
 omp plugin link ./plugins/omp-conventions
 ```
 
-It renames `system-conventions` and `system_conventions` to `conventions` in
-Cloud Code Assist system instructions while preserving the block contents.
+It renames only complete opening and closing `system-conventions` and
+`system_conventions` XML tags to `conventions` in Cloud Code Assist system
+instructions, preserving plain-text names and the block contents.
 See [`plugins/omp-conventions/README.md`](plugins/omp-conventions/README.md)
 for scope, single-invocation loading, and validation instructions.
 

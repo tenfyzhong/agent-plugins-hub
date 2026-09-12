@@ -51,8 +51,34 @@ class OmpConventionsTest(unittest.TestCase):
         self.assertEqual(result["payload"]["request"]["systemInstruction"]["parts"], [
             {"text": "<conventions>Keep all instructions.\n</conventions>"},
             {"text": "<conventions>Keep these too.</conventions>"},
-            {"text": "conventions and conventions references"},
+            {"text": "system-conventions and system_conventions references"},
         ])
+
+    def test_preserves_names_in_body_while_renaming_tags(self):
+        text = (
+            "<system-conventions>system-conventions and system_conventions"
+            "</system-conventions><system_conventions>system_conventions"
+            "</system_conventions>"
+        )
+        payload = {"request": {"systemInstruction": {"parts": [{"text": text}]}}}
+        result = self.run_extension(payload)
+        self.assertEqual(
+            result["payload"]["request"]["systemInstruction"]["parts"][0]["text"],
+            "<conventions>system-conventions and system_conventions"
+            "</conventions><conventions>system_conventions</conventions>",
+        )
+
+    def test_preserves_plain_names_and_incomplete_or_similar_tags(self):
+        text = (
+            "system-conventions system_conventions "
+            "<system-conventions-extra> </system_conventions_extra> "
+            "<system-conventions </system_conventions system-conventions> "
+            "&lt;system-conventions&gt; <SYSTEM-CONVENTIONS>"
+        )
+        payload = {"request": {"systemInstruction": {"parts": [{"text": text}]}}}
+        result = self.run_extension(payload)
+        self.assertEqual(result["payload"], payload)
+        self.assertTrue(result["unchangedResult"])
 
     def test_preserves_messages_tools_metadata_and_non_text_parts(self):
         payload = {
