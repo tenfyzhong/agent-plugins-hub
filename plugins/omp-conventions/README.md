@@ -31,28 +31,35 @@ request or that every HTTP 429 error will be resolved.
 
 ## Install in Oh My Pi
 
-Download the standalone extension directly from GitHub into the default OMP
-profile's extension directory:
+Add the GitHub marketplace, then install the extension with `omp install`:
 
 ```bash
-mkdir -p ~/.omp/agent/extensions
-curl -fL \
-  https://raw.githubusercontent.com/tenfyzhong/agent-plugins-hub/601e2e04a5a5e544a76a42515f11f04ebdeded8e/plugins/omp-conventions/extensions/omp-conventions.ts \
-  -o ~/.omp/agent/extensions/omp-conventions.ts
+omp plugin marketplace add https://github.com/tenfyzhong/agent-plugins-hub
+omp install omp-conventions@tenfyzhong-agent-plugins-hub
 ```
 
-Restart OMP to load the extension. No repository checkout or package linking is
-required. The URL pins the tested revision and works before this PR is merged.
-To update later, use the desired newer commit in the URL and run the command
-again.
+Restart OMP after installation. If the marketplace is already configured,
+refresh its catalog before installing:
 
-For a named OMP profile, use `~/.omp/profiles/<name>/agent/extensions/` as the
-destination instead. For a project-only installation, download the same GitHub
-URL into `<project>/.omp/extensions/omp-conventions.ts`.
+```bash
+omp plugin marketplace update tenfyzhong-agent-plugins-hub
+omp install omp-conventions@tenfyzhong-agent-plugins-hub
+```
 
-The plugin declares only `omp.extensions`. It has no Pi extension registration,
-Codex or Claude Code manifest, or shared marketplace entry, so installing this
-repository through those clients does not activate it.
+For a project-only installation, add `--scope project` to `omp install`.
+Update an installed version with:
+
+```bash
+omp plugin upgrade omp-conventions@tenfyzhong-agent-plugins-hub
+```
+
+The GitHub installation uses the repository's default branch and becomes
+available once this change is merged.
+
+The plugin is registered in the OMP-only `.omp-plugin/marketplace.json`
+catalog and declares only `omp.extensions`. It has no Pi extension registration,
+Codex or Claude Code manifest, or entry in their catalogs, so those clients do
+not activate it. The OMP catalog also retains all existing marketplace plugins.
 
 ## Validation
 

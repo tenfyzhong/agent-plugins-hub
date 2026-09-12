@@ -10,6 +10,7 @@ native package metadata alongside shared Agent Skills.
 .
 ├── .agents/plugins/marketplace.json    # Codex marketplace catalog
 ├── .claude-plugin/marketplace.json     # Claude Code marketplace catalog
+├── .omp-plugin/marketplace.json        # OMP marketplace catalog
 ├── .github/workflows/                  # Marketplace automation
 ├── plugins/
 │   ├── agent-guard/                      # Cross-agent destructive-command guard
@@ -120,20 +121,20 @@ omp plugin install agent-guard@tenfyzhong-agent-plugins-hub
 omp plugin install agent-notifier@tenfyzhong-agent-plugins-hub
 ```
 
-Install the OMP-only `omp-conventions` extension directly from GitHub:
+Install the OMP-only `omp-conventions` extension from the GitHub marketplace:
 
 ```bash
-mkdir -p ~/.omp/agent/extensions
-curl -fL \
-  https://raw.githubusercontent.com/tenfyzhong/agent-plugins-hub/601e2e04a5a5e544a76a42515f11f04ebdeded8e/plugins/omp-conventions/extensions/omp-conventions.ts \
-  -o ~/.omp/agent/extensions/omp-conventions.ts
+omp plugin marketplace add https://github.com/tenfyzhong/agent-plugins-hub
+omp install omp-conventions@tenfyzhong-agent-plugins-hub
 ```
+
+This entry becomes available after the change is merged into the default branch.
 
 It renames only complete opening and closing `system-conventions` and
 `system_conventions` XML tags to `conventions` in Cloud Code Assist system
 instructions, preserving plain-text names and the block contents.
 See [`plugins/omp-conventions/README.md`](plugins/omp-conventions/README.md)
-for restart, profile and project scope, updates, and validation instructions.
+for catalog refresh, project scope, updates, and validation instructions.
 
 ## Agent Guard
 

@@ -127,6 +127,20 @@ class OmpConventionsTest(unittest.TestCase):
         self.assertEqual(result["payload"], payload)
         self.assertTrue(result["unchangedResult"])
 
+    def test_omp_marketplace_registers_extension_and_preserves_existing_plugins(self):
+        catalog = json.loads((ROOT / ".omp-plugin/marketplace.json").read_text())
+        fallback = json.loads((ROOT / ".claude-plugin/marketplace.json").read_text())
+        self.assertEqual(catalog["name"], fallback["name"])
+        entries = {entry["name"]: entry for entry in catalog["plugins"]}
+        self.assertEqual(len(entries), len(catalog["plugins"]))
+        for entry in fallback["plugins"]:
+            self.assertEqual(entries[entry["name"]], entry)
+        self.assertEqual(
+            entries["omp-conventions"]["source"], "./plugins/omp-conventions"
+        )
+        for entry in entries.values():
+            self.assertTrue((ROOT / entry["source"]).is_dir())
+
     def test_package_is_only_registered_for_omp(self):
         package = json.loads((PLUGIN / "package.json").read_text())
         self.assertEqual(package["name"], "omp-conventions")
