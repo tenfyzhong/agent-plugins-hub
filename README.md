@@ -10,10 +10,12 @@ native package metadata alongside shared Agent Skills.
 .
 ├── .agents/plugins/marketplace.json    # Codex marketplace catalog
 ├── .claude-plugin/marketplace.json     # Claude Code marketplace catalog
+├── .omp-plugin/marketplace.json        # OMP marketplace catalog
 ├── .github/workflows/                  # Marketplace automation
 ├── plugins/
 │   ├── agent-guard/                      # Cross-agent destructive-command guard
 │   ├── agent-notifier/                   # Webhook and Telegram completion notifier
+│   ├── omp-conventions/                  # OMP-only system conventions naming workaround
 │   ├── lark-cli-skills/
 │       ├── .claude-plugin/plugin.json  # Claude Code plugin manifest
 │       ├── .codex-plugin/plugin.json   # Codex plugin manifest
@@ -117,6 +119,7 @@ Add this repository as an OMP marketplace and install the required plugins:
 omp plugin marketplace add tenfyzhong/agent-plugins-hub
 omp plugin install agent-guard@tenfyzhong-agent-plugins-hub
 omp plugin install agent-notifier@tenfyzhong-agent-plugins-hub
+omp install omp-conventions@tenfyzhong-agent-plugins-hub
 ```
 
 ## Agent Guard
@@ -135,6 +138,15 @@ Telegram chat. It uses native hooks for Codex, Claude Code, and Oh My Pi, plus
 a Pi extension. See
 [`plugins/agent-notifier/README.md`](plugins/agent-notifier/README.md)
 for webhook and Telegram configuration.
+
+## OMP Conventions
+
+The `omp-conventions` plugin renames complete opening and closing
+`system-conventions` and `system_conventions` XML tags to `conventions` in
+Cloud Code Assist system instructions, preserving plain-text names and block
+contents. It uses an Oh My Pi extension and applies only to Oh My Pi. See
+[`plugins/omp-conventions/README.md`](plugins/omp-conventions/README.md)
+for installation, updates, and validation instructions.
 
 ## Lark CLI Skills
 

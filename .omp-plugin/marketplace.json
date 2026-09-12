@@ -1,0 +1,32 @@
+{
+  "name": "tenfyzhong-agent-plugins-hub",
+  "owner": {
+    "name": "tenfyzhong"
+  },
+  "metadata": {
+    "description": "Cross-agent productivity plugins and shared Agent Skills."
+  },
+  "plugins": [
+    {
+      "name": "lark-cli-skills",
+      "source": "./plugins/lark-cli-skills"
+    },
+    {
+      "name": "obsidian-skills",
+      "source": "./plugins/obsidian-skills"
+    },
+    {
+      "name": "agent-guard",
+      "source": "./plugins/agent-guard"
+    },
+    {
+      "name": "agent-notifier",
+      "source": "./plugins/agent-notifier"
+    },
+    {
+      "name": "omp-conventions",
+      "source": "./plugins/omp-conventions",
+      "description": "OMP-only conventions XML tag renaming."
+    }
+  ]
+}
