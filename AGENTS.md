@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-This repository distributes cross-agent plugins for Codex, Claude Code, and Pi. Marketplace catalogs live in `.agents/plugins/marketplace.json` and `.claude-plugin/marketplace.json`; `package.json` supplies Pi metadata. Each plugin belongs under `plugins/<plugin-name>/` with agent-specific manifests, registered skills in `skills/`, and any supporting assets beside the skill that uses them.
+This repository distributes cross-agent plugins for Codex, Claude Code, Pi, Oh My Pi, and Antigravity CLI (`agy`). Marketplace catalogs live in `.agents/plugins/marketplace.json` and `.claude-plugin/marketplace.json`; `package.json` supplies Pi metadata. Antigravity manifests live in each supported plugin's `.antigravity-plugin/plugin.json`; its native hooks use root-level `hooks.json`. Each plugin belongs under `plugins/<plugin-name>/` with agent-specific manifests, registered skills in `skills/`, and any supporting assets beside the skill that uses them.
 
 The `lark-cli-skills` plugin exposes one lazy router at `plugins/lark-cli-skills/skills/lark/`. Its `internal-skills/` tree and `LICENSE` mirror `larksuite/cli`; regenerate them with the sync script instead of editing mirrored files manually. Maintenance utilities live in `scripts/`, repository tests in `tests/`, and automation in `.github/workflows/`.
 

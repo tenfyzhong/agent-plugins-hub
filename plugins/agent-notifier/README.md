@@ -1,6 +1,6 @@
 # Agent Notifier
 
-Agent Notifier supports Codex, Claude Code, pi, and oh-my-pi. It posts a
+Agent Notifier supports Codex, Claude Code, pi, oh-my-pi, and Antigravity CLI (`agy`). It posts a
 completion notification after an interactive agent run finishes and no queued
 continuation remains. The notification includes the remaining 5-hour and
 weekly quota when available.
@@ -130,7 +130,24 @@ The cache contains quota percentages and reset timestamps only. It is stored
 under `$XDG_CACHE_HOME/agent-notifier/claude-rate-limits/`, or
 `~/.cache/agent-notifier/claude-rate-limits/` when `XDG_CACHE_HOME` is unset.
 
+## Antigravity CLI behavior
+
+The native `Stop` adapter sends only when `fullyIdle` is true. It maps the
+conversation ID, model, transcript path, and first workspace path into the
+shared notification format with host `Antigravity`. The hook does not supply
+an assistant message or quota, so those fields are omitted. It never requests
+continuation of the agent loop.
+
+Print (`-p`, `--print`, `--prompt`), stream input (`--input-format`), and ACP
+sessions are suppressed when detectable in the parent process tree. If process
+metadata is unavailable, notifications remain enabled. Webhook/Telegram setup
+is shared with the other hosts.
+
 ## Host integration
+
+- Antigravity CLI: install with `agy plugin install ./plugins/agent-notifier`
+  from the repository root. It loads `.antigravity-plugin/plugin.json` and
+  root-level `hooks.json`, independently of the other hosts.
 
 - Codex and Claude Code discover `hooks/hooks.json` from the installed plugin.
 - pi loads `extensions/agent-notifier.ts` through the root package or this
