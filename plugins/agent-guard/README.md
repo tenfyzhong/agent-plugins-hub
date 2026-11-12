@@ -1,11 +1,15 @@
 # Agent Guard
 
-Agent Guard supports Codex, Claude Code, pi, and oh-my-pi. It denies known
+Agent Guard supports Codex, Claude Code, pi, oh-my-pi, and Antigravity CLI (`agy`). It denies known
 destructive shell commands before an agent runs them. Completion notifications
 live in the separate [`agent-notifier`](../agent-notifier/README.md) plugin,
 which posts to a webhook or Telegram.
 
 ## Host integration
+
+- Antigravity CLI: install with `agy plugin install ./plugins/agent-guard`
+  from the repository root. It loads `.antigravity-plugin/plugin.json` and
+  root-level `hooks.json`, independently of the other hosts.
 
 - Codex and Claude Code discover `hooks/hooks.json` from the installed plugin.
 - pi loads `extensions/agent-guard.ts` through the root package or this
@@ -15,6 +19,10 @@ which posts to a webhook or Telegram.
 
 Restart the host after installing or upgrading the plugin so lifecycle hooks
 are reloaded.
+
+The agy adapter checks `run_command` / `CommandLine` and returns native
+`deny` decisions for blocked commands. Safe commands return `allow`, leaving
+normal permission checks in place.
 
 ## Blocked commands
 

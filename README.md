@@ -1,8 +1,8 @@
 # Agent Plugins Hub
 
 A cross-agent marketplace for plugins maintained in this repository. It
-supports OpenAI Codex, Claude Code, Pi, and Oh My Pi while keeping each agent's
-native package metadata alongside shared Agent Skills.
+supports OpenAI Codex, Claude Code, Pi, Oh My Pi, and Antigravity CLI (`agy`)
+while keeping each agent's native package metadata alongside shared Agent Skills.
 
 ## Repository layout
 
@@ -122,11 +122,46 @@ omp plugin install agent-notifier@tenfyzhong-agent-plugins-hub
 omp install omp-conventions@tenfyzhong-agent-plugins-hub
 ```
 
+## Install with Antigravity CLI (agy)
+
+Clone this repository, then install each desired plugin from its directory:
+
+```bash
+git clone https://github.com/tenfyzhong/agent-plugins-hub.git
+cd agent-plugins-hub
+agy plugin install ./plugins/lark-cli-skills
+agy plugin install ./plugins/obsidian-skills
+agy plugin install ./plugins/agent-guard
+agy plugin install ./plugins/agent-notifier
+agy plugin list --json
+```
+
+For local development, run the four install commands from your checkout.
+After updating the checkout, reinstall the desired plugins and restart agy.
+Invoke the skill routers with `/lark` or `/obsidian`. `omp-conventions` is
+OMP-only and is not an agy plugin.
+
+Each supported plugin has `.antigravity-plugin/plugin.json`. Antigravity
+loads the shared `skills/` directory and its own root-level `hooks.json`;
+mirrored `internal-skills/` remain unregistered. The guard and notifier use
+separate agy adapters for its native hook payloads and responses.
+
+Validate a plugin with `agy plugin validate ./plugins/<name>`. The two hook
+plugins produce an expected warning that `hooks/hooks.json` is ignored by
+agy: that file belongs to Codex/Claude, while agy loads `hooks.json` at the
+plugin root. Consequently `--strict` fails on that coexistence warning;
+the skill-only plugins pass strict validation. Repository tests reject any
+other validation warning and, when agy is installed, verify installation and
+component discovery in a temporary home directory.
+
+See the official [plugin authoring guide](https://antigravity.google/docs/build-plugins/)
+and [hook contract](https://antigravity.google/docs/hooks/).
+
 ## Agent Guard
 
 The `agent-guard` plugin blocks known destructive shell commands before they
-run. It uses native hooks for Codex, Claude Code, and Oh My Pi, plus a Pi
-extension. See
+run. It uses native hooks for Codex, Claude Code, and Antigravity CLI, plus
+Pi and OMP extensions. See
 [`plugins/agent-guard/README.md`](plugins/agent-guard/README.md)
 for its blocked-command policy.
 
@@ -134,8 +169,8 @@ for its blocked-command policy.
 
 The `agent-notifier` plugin posts a completion notification after an
 interactive agent run finishes, to either a user-configured webhook or a
-Telegram chat. It uses native hooks for Codex, Claude Code, and Oh My Pi, plus
-a Pi extension. See
+Telegram chat. It uses native hooks for Codex, Claude Code, and Antigravity CLI,
+plus Pi and OMP extensions. See
 [`plugins/agent-notifier/README.md`](plugins/agent-notifier/README.md)
 for webhook and Telegram configuration.
 

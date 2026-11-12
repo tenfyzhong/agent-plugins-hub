@@ -1,0 +1,16 @@
+{
+  "agent-guard": {
+    "PreToolUse": [
+      {
+        "matcher": "^run_command$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "NODE_USE_ENV_PROXY=1 node ./hooks/agent-guard-agy.mjs",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
