@@ -224,7 +224,7 @@ license.
 ## Obsidian Skills
 
 The `obsidian-skills` plugin mirrors every skill under
-[`kepano/obsidian-skills/skills`](https://github.com/kepano/obsidian-skills/tree/main/skills).
+[`obsidianmd/obsidian-skills/plugins/obsidian/skills`](https://github.com/obsidianmd/obsidian-skills/tree/main/plugins/obsidian/skills).
 The manifest registers only the lightweight `obsidian` router under `skills/`;
 the upstream skills are stored under `internal-skills/` and remain unregistered.
 The router activates for Obsidian requests and work in an Obsidian vault, then

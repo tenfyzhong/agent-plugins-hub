@@ -50,12 +50,15 @@ class SyncObsidianSkillsTest(unittest.TestCase):
         )
         self.run_command("bash", str(SYNC_SCRIPT), env=environment)
 
-    def test_mirrors_upstream_skills_and_records_revision(self):
-        alpha = self.upstream / "skills" / "alpha"
+    def test_mirrors_nested_upstream_skills_and_records_revision(self):
+        alpha = self.upstream / "plugins" / "obsidian" / "skills" / "alpha"
         alpha.mkdir(parents=True)
         (alpha / "SKILL.md").write_text("# Alpha  \n", encoding="utf-8")
         (self.upstream / "LICENSE").write_text("Upstream license\n", encoding="utf-8")
         (self.upstream / "README.md").write_text("not a skill\n", encoding="utf-8")
+        legacy = self.upstream / "skills" / "legacy"
+        legacy.mkdir(parents=True)
+        (legacy / "SKILL.md").write_text("# Legacy\n", encoding="utf-8")
         first_revision = self.commit("Add alpha skill")
 
         self.sync()
@@ -65,11 +68,12 @@ class SyncObsidianSkillsTest(unittest.TestCase):
             "# Alpha\n",
         )
         self.assertFalse((self.destination / "README.md").exists())
+        self.assertFalse((self.destination / "legacy").exists())
         self.assertEqual(self.license_file.read_text(encoding="utf-8"), "Upstream license\n")
         self.assertEqual(self.revision_file.read_text(encoding="utf-8"), first_revision + "\n")
 
         shutil.rmtree(alpha)
-        beta = self.upstream / "skills" / "beta"
+        beta = self.upstream / "plugins" / "obsidian" / "skills" / "beta"
         beta.mkdir(parents=True)
         (beta / "SKILL.md").write_text("# Beta\n", encoding="utf-8")
         second_revision = self.commit("Replace alpha with beta")
