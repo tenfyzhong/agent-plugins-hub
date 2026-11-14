@@ -47,6 +47,25 @@ class ObsidianLazyLoadingTest(unittest.TestCase):
 
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_headless_workflow_is_discoverable_and_loadable(self):
+        result = subprocess.run(
+            [sys.executable, str(DISCOVERY_SCRIPT)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        catalog = {item["name"]: item for item in json.loads(result.stdout)}
+
+        self.assertIn("obsidian-headless", catalog)
+        headless = catalog["obsidian-headless"]
+        self.assertTrue(headless["description"])
+        skill_path = Path(headless["path"])
+        self.assertEqual(
+            skill_path,
+            (INTERNAL_SKILLS_ROOT / "obsidian-headless" / "SKILL.md").resolve(),
+        )
+        self.assertTrue(skill_path.read_text(encoding="utf-8").strip())
+
     def test_only_obsidian_router_skill_is_registered(self):
         manifest = json.loads(PLUGIN_MANIFEST.read_text(encoding="utf-8"))
         registered_skills = sorted(
