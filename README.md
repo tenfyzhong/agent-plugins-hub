@@ -224,7 +224,7 @@ license.
 ## Obsidian Skills
 
 The `obsidian-skills` plugin mirrors every skill under
-[`kepano/obsidian-skills/skills`](https://github.com/kepano/obsidian-skills/tree/main/skills).
+[`obsidianmd/obsidian-skills/plugins/obsidian/skills`](https://github.com/obsidianmd/obsidian-skills/tree/main/plugins/obsidian/skills).
 The manifest registers only the lightweight `obsidian` router under `skills/`;
 the upstream skills are stored under `internal-skills/` and remain unregistered.
 The router activates for Obsidian requests and work in an Obsidian vault, then
@@ -232,7 +232,10 @@ loads only the selected workflow. Each snapshot records its source commit in
 `plugins/obsidian-skills/.upstream-revision`.
 
 Routing uses the discovered skill metadata rather than a fixed list, so newly
-synchronized workflows remain discoverable. Knap requests cover Markdown
+synchronized workflows remain discoverable. Headless Sync and Publish requests
+use `obsidian-headless` (`ob`), while desktop app automation uses `obsidian-cli`.
+Direct note edits use the relevant file-format skill; combine it with Headless
+only when syncing or publishing is also requested. Knap requests cover Markdown
 template rendering and batch note generation from JSON or CSV; web extraction
 followed by template rendering uses Defuddle together with Knap.
 

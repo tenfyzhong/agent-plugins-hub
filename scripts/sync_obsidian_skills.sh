@@ -5,7 +5,7 @@ set -euo pipefail
 script_directory=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 repository_root=$(cd -- "$script_directory/.." && pwd)
 
-upstream_repository=${UPSTREAM_REPOSITORY:-https://github.com/kepano/obsidian-skills.git}
+upstream_repository=${UPSTREAM_REPOSITORY:-https://github.com/obsidianmd/obsidian-skills.git}
 upstream_ref=${UPSTREAM_REF:-main}
 skills_destination=${SKILLS_DESTINATION:-$repository_root/plugins/obsidian-skills/internal-skills}
 revision_file=${UPSTREAM_REVISION_FILE:-$repository_root/plugins/obsidian-skills/.upstream-revision}
@@ -29,9 +29,9 @@ git clone \
     --branch "$upstream_ref" \
     "$upstream_repository" \
     "$upstream_checkout"
-git -C "$upstream_checkout" sparse-checkout set skills
+git -C "$upstream_checkout" sparse-checkout set plugins/obsidian/skills
 
-upstream_skills="$upstream_checkout/skills"
+upstream_skills="$upstream_checkout/plugins/obsidian/skills"
 if ! find "$upstream_skills" -mindepth 2 -name SKILL.md -print -quit | grep -q .; then
     printf 'No skills found in %s at %s\n' "$upstream_repository" "$upstream_ref" >&2
     exit 1
