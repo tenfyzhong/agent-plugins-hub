@@ -25,7 +25,6 @@ class AntigravityPluginsTest(unittest.TestCase):
                     self.assertEqual(manifest[field], claude[field])
                 self.assertTrue(manifest["displayName"])
                 self.assertNotIn("skills", manifest)  # Default skills/ only; no mirrors.
-        self.assertFalse((ROOT / "plugins/omp-conventions/.antigravity-plugin").exists())
 
     def run_guard(self, payload):
         root = ROOT / "plugins/agent-guard"

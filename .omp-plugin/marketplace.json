@@ -22,11 +22,6 @@
     {
       "name": "agent-notifier",
       "source": "./plugins/agent-notifier"
-    },
-    {
-      "name": "omp-conventions",
-      "source": "./plugins/omp-conventions",
-      "description": "OMP-only conventions XML tag renaming."
     }
   ]
 }
