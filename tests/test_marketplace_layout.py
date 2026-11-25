@@ -6,6 +6,7 @@ from pathlib import Path
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 MARKETPLACE_FILE = REPOSITORY_ROOT / ".agents" / "plugins" / "marketplace.json"
 CLAUDE_MARKETPLACE_FILE = REPOSITORY_ROOT / ".claude-plugin" / "marketplace.json"
+OMP_MARKETPLACE_FILE = REPOSITORY_ROOT / ".omp-plugin" / "marketplace.json"
 MARKETPLACE_NAME = "tenfyzhong-agent-plugins-hub"
 REPOSITORY_NAME = "agent-plugins-hub"
 REPOSITORY_URL = "https://github.com/tenfyzhong/agent-plugins-hub"
@@ -84,6 +85,15 @@ class MarketplaceLayoutTest(unittest.TestCase):
                 self.assertTrue(
                     (REPOSITORY_ROOT / extension.removeprefix("./")).is_file()
                 )
+
+    def test_omp_marketplace_lists_shared_plugins(self):
+        marketplace = json.loads(OMP_MARKETPLACE_FILE.read_text(encoding="utf-8"))
+        shared_marketplace = json.loads(
+            CLAUDE_MARKETPLACE_FILE.read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(marketplace["name"], MARKETPLACE_NAME)
+        self.assertCountEqual(marketplace["plugins"], shared_marketplace["plugins"])
 
     def test_repository_has_no_omp_extension_install_manifest(self):
         repository_package = json.loads(
