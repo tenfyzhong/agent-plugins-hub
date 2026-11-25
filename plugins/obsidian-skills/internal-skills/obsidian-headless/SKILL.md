@@ -27,7 +27,7 @@ Commands act on the vault in the current directory, or the one given with `--pat
 
 ## Sync
 
-Don't use the desktop app's Sync and Headless Sync for the same vault on the same device, because they cause conflicts. Ask the user to back up the vault folder before the first sync.
+Don't use the desktop app's Sync and Headless Sync for the same vault on the same device, because they cause conflicts. Ask the user before the first sync of a vault, and ask them to back up the vault folder first, because sync changes files on this device and in the remote vault.
 
 ```bash
 ob sync-list-remote                                  # remote vaults, including shared ones
